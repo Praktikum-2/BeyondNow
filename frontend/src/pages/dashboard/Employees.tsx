@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { Plus, Search, Filter, Download } from "lucide-react";
-import { employees } from "../../data/mockData";
+import type { Employee } from "../../types/types";
+import { employees as initialEmployees } from "../../data/mockData";
+import AddEmployeeForm from "../../components/dashboard/employees/AddEmployeeForm";
 
 const Employees: React.FC = () => {
+  const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedRole, setSelectedRole] = useState("all");
+  const [showAddForm, setShowAddForm] = useState(false);
 
   const departments = [...new Set(employees.map((emp) => emp.department))];
   const roles = [...new Set(employees.map((emp) => emp.role))];
@@ -23,6 +27,22 @@ const Employees: React.FC = () => {
     return matchesSearch && matchesDepartment && matchesRole;
   });
 
+  const handleAddEmployee = (formData: any) => {
+    const newEmployee: Employee = {
+      ...formData,
+      availability: Array.from({ length: 30 }, (_, i) => ({
+        date: new Date(Date.now() + i * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
+        available: 100,
+        projects: [],
+      })),
+    };
+
+    setEmployees([...employees, newEmployee]);
+    setShowAddForm(false);
+  };
+
   return (
     <div className='space-y-6'>
       <div className='flex justify-between items-start'>
@@ -37,7 +57,9 @@ const Employees: React.FC = () => {
             <Download size={16} className='mr-2' />
             Izvozi
           </button>
-          <button className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
             <Plus size={16} className='mr-2' />
             Dodaj zaposlenega
           </button>
@@ -183,6 +205,13 @@ const Employees: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {showAddForm && (
+        <AddEmployeeForm
+          onSubmit={handleAddEmployee}
+          onCancel={() => setShowAddForm(false)}
+        />
+      )}
     </div>
   );
 };

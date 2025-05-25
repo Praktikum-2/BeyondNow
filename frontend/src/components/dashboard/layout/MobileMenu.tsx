@@ -1,6 +1,6 @@
-import React from "react";
-import { X } from "lucide-react";
+import React, { useLayoutEffect, useEffect, useState } from "react";
 import {
+  X,
   LayoutDashboard,
   Calendar,
   Users,
@@ -25,12 +25,34 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   activePage,
   onNavigate,
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useLayoutEffect(() => {
+    if (isOpen) {
+      setIsMounted(true);
+      requestAnimationFrame(() => {
+        document.body.getBoundingClientRect();
+        setIsVisible(true);
+      });
+    } else {
+      setIsVisible(false);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isVisible && isMounted) {
+      const timeout = setTimeout(() => setIsMounted(false), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [isVisible, isMounted]);
+
+  if (!isMounted) return null;
+
   const handleNavigation = (page: string) => {
     onNavigate(page);
     onClose();
   };
-
-  if (!isOpen) return null;
 
   const mainNavItems = [
     {
@@ -54,11 +76,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
     <div className='fixed inset-0 z-40 flex lg:hidden'>
       {/* Backdrop */}
       <div
-        className='fixed inset-0 bg-gray-600 bg-opacity-75'
+        className={`fixed inset-0 bg-gray-600/60 transition-opacity duration-300 ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
         onClick={onClose}></div>
 
-      {/* Menu panel */}
-      <div className='relative flex flex-col w-72 max-w-xs bg-white'>
+      {/* Sliding panel */}
+      <div
+        className={`relative flex flex-col w-72 max-w-xs bg-white shadow-lg transform transition-transform duration-300 ${
+          isVisible ? "translate-x-0" : "-translate-x-full"
+        }`}>
         <div className='flex items-center justify-between p-4 border-b border-gray-200'>
           <h1 className='text-lg font-semibold text-gray-900'>
             Planiranje zaposlenih

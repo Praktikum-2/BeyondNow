@@ -16,14 +16,16 @@ const UtilizationChart: React.FC<UtilizationChartProps> = ({ data }) => {
 
   const chartHeight = 200;
   const barWidth = `calc(100% / ${data.length})`;
-  const barMargin = 1;
+  const barMargin = 2;
 
   const chartData = data.slice(0, 7);
 
   return (
-    <div className='bg-white rounded-lg shadow-sm border border-gray-100 p-5'>
+    <div className='bg-white rounded-xl shadow-md border border-gray-100 p-6'>
       <div className='mb-5'>
-        <h2 className='text-lg font-medium text-gray-900'>Zasedenost virov</h2>
+        <h2 className='text-xl font-semibold text-gray-900'>
+          Zasedenost virov
+        </h2>
         <p className='text-sm text-gray-500'>
           Pregled zasedenosti v zadnjem tednu
         </p>
@@ -32,51 +34,58 @@ const UtilizationChart: React.FC<UtilizationChartProps> = ({ data }) => {
       <div className='mt-4'>
         <div className='relative h-[200px]'>
           {/* Y-axis labels */}
-          <div className='absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 py-1'>
-            <span>100%</span>
-            <span>75%</span>
-            <span>50%</span>
-            <span>25%</span>
-            <span>0%</span>
+          <div className='absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 py-1 leading-none'>
+            {[100, 75, 50, 25, 0].map((val) => (
+              <span key={val}>{val}%</span>
+            ))}
           </div>
 
-          {/* Chart area */}
+          {/* Grid lines */}
+          <div className='absolute left-8 top-0 w-[calc(100%-2rem)] h-full flex flex-col justify-between pointer-events-none py-1'>
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className='border-t border-dashed border-gray-200 w-full'></div>
+            ))}
+          </div>
+
+          {/* Chart bars */}
           <div className='ml-8 h-full flex items-end'>
             {chartData.map((item, index) => (
               <div
                 key={index}
-                className='relative flex flex-col justify-end h-full'
+                className='relative flex flex-col justify-end h-full group'
                 style={{ width: barWidth, marginRight: `${barMargin}px` }}>
                 {/* Overallocated */}
                 {item.overallocated > 0 && (
                   <div
-                    className='w-full bg-red-500'
+                    className='w-full bg-red-400 group-hover:brightness-110'
                     style={{
                       height: `${(item.overallocated / 100) * chartHeight}px`,
-                      transition: "height 0.3s ease",
+                      transition: "all 0.3s ease",
                     }}
-                    title={`Overallocated: ${item.overallocated.toFixed(
+                    title={`Preobremenjeno: ${item.overallocated.toFixed(
                       1
                     )}%`}></div>
                 )}
 
                 {/* Utilized */}
                 <div
-                  className='w-full bg-blue-500'
+                  className='w-full bg-blue-400 group-hover:brightness-110'
                   style={{
                     height: `${(item.utilized / 100) * chartHeight}px`,
-                    transition: "height 0.3s ease",
+                    transition: "all 0.3s ease",
                   }}
-                  title={`Utilized: ${item.utilized.toFixed(1)}%`}></div>
+                  title={`Zasedeno: ${item.utilized.toFixed(1)}%`}></div>
 
                 {/* Available */}
                 <div
-                  className='w-full bg-green-400'
+                  className='w-full bg-green-300 group-hover:brightness-110'
                   style={{
                     height: `${(item.available / 100) * chartHeight}px`,
-                    transition: "height 0.3s ease",
+                    transition: "all 0.3s ease",
                   }}
-                  title={`Available: ${item.available.toFixed(1)}%`}></div>
+                  title={`Na voljo: ${item.available.toFixed(1)}%`}></div>
 
                 {/* X-axis label */}
                 <div className='absolute -bottom-6 w-full text-center text-xs text-gray-500'>
@@ -88,17 +97,17 @@ const UtilizationChart: React.FC<UtilizationChartProps> = ({ data }) => {
         </div>
 
         {/* Legend */}
-        <div className='flex items-center justify-center mt-10 space-x-4 text-sm'>
-          <div className='flex items-center'>
-            <div className='w-3 h-3 bg-red-500 mr-1'></div>
+        <div className='flex items-center justify-center mt-10 space-x-6 text-sm'>
+          <div className='flex items-center gap-1'>
+            <div className='w-3 h-3 bg-red-400 rounded-sm'></div>
             <span className='text-gray-600'>Preobremenjeno</span>
           </div>
-          <div className='flex items-center'>
-            <div className='w-3 h-3 bg-blue-500 mr-1'></div>
+          <div className='flex items-center gap-1'>
+            <div className='w-3 h-3 bg-blue-400 rounded-sm'></div>
             <span className='text-gray-600'>Zasedeno</span>
           </div>
-          <div className='flex items-center'>
-            <div className='w-3 h-3 bg-green-400 mr-1'></div>
+          <div className='flex items-center gap-1'>
+            <div className='w-3 h-3 bg-green-300 rounded-sm'></div>
             <span className='text-gray-600'>Na voljo</span>
           </div>
         </div>

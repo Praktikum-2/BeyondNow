@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Plus, Search, Filter, Calendar, Users, Clock } from "lucide-react";
-
-import { projects } from "../../data/mockData";
+import type { Project } from "../../types/types";
+import { projects as initialProjects } from "../../data/mockData";
+import AddProjectForm from "../../components/dashboard/projects/AddProjectForm";
 
 const Projects: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [showAddForm, setShowAddForm] = useState(false);
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
@@ -55,6 +58,11 @@ const Projects: React.FC = () => {
     }
   };
 
+  const handleAddProject = (formData: any) => {
+    setProjects([...projects, formData]);
+    setShowAddForm(false);
+  };
+
   return (
     <div className='space-y-6'>
       <div className='flex justify-between items-start'>
@@ -64,7 +72,9 @@ const Projects: React.FC = () => {
             Pregled in upravljanje projektov
           </p>
         </div>
-        <button className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
+        <button
+          onClick={() => setShowAddForm(true)}
+          className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
           <Plus size={16} className='mr-2' />
           Nov projekt
         </button>
@@ -184,6 +194,13 @@ const Projects: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {showAddForm && (
+        <AddProjectForm
+          onSubmit={handleAddProject}
+          onCancel={() => setShowAddForm(false)}
+        />
+      )}
     </div>
   );
 };
