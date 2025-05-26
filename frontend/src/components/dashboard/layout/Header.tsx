@@ -31,9 +31,19 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
             className='p-2 mr-2 text-gray-500 rounded-md lg:hidden hover:text-gray-900 hover:bg-gray-100'>
             <Menu size={20} />
           </button>
-          <h1 className='text-lg font-semibold text-gray-900 sm:text-xl'>
-            {title}
-          </h1>
+          <nav className='text-sm text-gray-500'>
+            <ol className='flex items-center space-x-1 sm:space-x-2'>
+              <li>
+                <span className='text-gray-600 font-medium'>Department</span>
+              </li>
+              <li>
+                <span className='text-gray-400'>›</span>
+              </li>
+              <li>
+                <span className='text-gray-900 font-semibold'>{title}</span>
+              </li>
+            </ol>
+          </nav>
         </div>
 
         {/* Center search (desktop) */}

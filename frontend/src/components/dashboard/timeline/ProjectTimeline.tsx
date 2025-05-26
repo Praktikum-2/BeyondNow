@@ -64,7 +64,6 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
 
   const generateTimelineRows = (): ProjectTimelineRow[] => {
     return projects.map((project) => {
-      // Get employee details for this project
       const projectEmployees = project.teamMembers.map((member) => {
         const employee = employees.find((e) => e.id === member.employeeId);
         return {
@@ -75,7 +74,6 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
         };
       });
 
-      // Get required roles
       const requiredRoles = project.requiredRoles.map((role) => ({
         id: role.id,
         role: role.role,
@@ -96,7 +94,6 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
 
   const projectRows = generateTimelineRows();
 
-  // Helper to check if a date falls within a range
   const isDateInRange = (date: Date, startDate: string, endDate: string) => {
     const dateToCheck = date.toISOString().split("T")[0];
     return dateToCheck >= startDate && dateToCheck <= endDate;
