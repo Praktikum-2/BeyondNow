@@ -65,7 +65,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
           <h2 className='text-lg font-medium text-gray-900'>Nov projekt</h2>
           <button
             onClick={onCancel}
-            className='text-gray-400 hover:text-gray-500 transition-colors'>
+            className='text-gray-400 hover:text-gray-500 transition-colors cursor-pointer'>
             <X size={20} />
           </button>
         </div>

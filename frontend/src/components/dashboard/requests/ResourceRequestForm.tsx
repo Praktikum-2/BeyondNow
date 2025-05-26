@@ -49,7 +49,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
 
   return (
     <div
-      className='fixed inset-0 bg-gray-600/65 flex items-center justify-center z-50 p-4'
+      className='fixed inset-0 bg-gray-600/65 flex items-center justify-center z-50 p-4 cursor-pointer'
       onClick={onCancel}>
       <div
         className='bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto'

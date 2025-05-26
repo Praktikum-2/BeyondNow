@@ -71,7 +71,7 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
           </h2>
           <button
             onClick={onCancel}
-            className='text-gray-400 hover:text-gray-500 transition-colors'>
+            className='text-gray-400 hover:text-gray-500 transition-colors cursor-pointer'>
             <X size={20} />
           </button>
         </div>
