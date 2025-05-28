@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", async (req, res) => {
-  const count = await prisma.developer.count();
+  const count = await prisma.employee.count();
   res.send(`There are ${count} developers in the database.`);
 });
 

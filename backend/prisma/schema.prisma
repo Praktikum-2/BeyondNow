@@ -11,63 +11,61 @@ datasource db {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Department {
-  department_id                                          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                                                   String      @db.VarChar
-  departmentLeader_id_fk                                 String?     @db.Uuid
-  Developer_Department_departmentLeader_id_fkToDeveloper Developer?  @relation("Department_departmentLeader_id_fkToDeveloper", fields: [departmentLeader_id_fk], references: [developer_id], onDelete: Restrict)
-  Developer_Developer_department_id_fkToDepartment       Developer[] @relation("Developer_department_id_fkToDepartment")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Developer {
-  developer_id                                            String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ime                                                     String             @db.VarChar
-  priimek                                                 String?            @db.VarChar
-  department_id_fk                                        String?            @db.Uuid
-  Department_Department_departmentLeader_id_fkToDeveloper Department[]       @relation("Department_departmentLeader_id_fkToDeveloper")
-  Department_Developer_department_id_fkToDepartment       Department?        @relation("Developer_department_id_fkToDepartment", fields: [department_id_fk], references: [department_id])
-  DeveloperSkill                                          DeveloperSkill[]
-  Project                                                 Project[]
-  ProjectDeveloper                                        ProjectDeveloper[]
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model DeveloperSkill {
-  developerSkill_id String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  developer_id_fk   String?    @db.Uuid
-  skills_id_fk      String?    @db.Uuid
-  Developer         Developer? @relation(fields: [developer_id_fk], references: [developer_id], onDelete: Restrict, onUpdate: Restrict)
-  Skills            Skills?    @relation(fields: [skills_id_fk], references: [skill_id], onDelete: Restrict, onUpdate: Restrict)
+  department_id                                          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                                                   String     @db.VarChar
+  departmentLeader_id_fk                                 String?    @db.Uuid
+  Developer_Department_departmentLeader_id_fkToDeveloper Employee?  @relation("Department_departmentLeader_id_fkToDeveloper", fields: [departmentLeader_id_fk], references: [employee_id])
+  Employee_Employee_department_id_fkToDepartment         Employee[] @relation("Employee_department_id_fkToDepartment")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Project {
-  project_id        String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name              String             @db.VarChar
-  start_date        DateTime?          @db.Timestamp(6)
-  end_date          DateTime?          @db.Timestamp(6)
-  projectManager_id String?            @db.Uuid
-  Developer         Developer?         @relation(fields: [projectManager_id], references: [developer_id], onUpdate: Restrict)
-  ProjectDeveloper  ProjectDeveloper[]
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model ProjectDeveloper {
-  projectDeveloper_id String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  developer_id_fk     String    @db.Uuid
-  project_id_fk       String?   @db.Uuid
-  Developer           Developer @relation(fields: [developer_id_fk], references: [developer_id], onDelete: Cascade)
-  Project             Project?  @relation(fields: [project_id_fk], references: [project_id], onDelete: Cascade, onUpdate: Restrict)
+  project_id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String    @db.VarChar
+  start_date        DateTime? @db.Timestamp(6)
+  end_date          DateTime? @db.Timestamp(6)
+  projectManager_id String?   @db.Uuid
+  Developer         Employee? @relation(fields: [projectManager_id], references: [employee_id])
+  Role              Role[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Skills {
-  skill_id       String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  skill          String           @db.VarChar
-  DeveloperSkill DeveloperSkill[]
+  skill_id      String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  skill         String          @db.VarChar
+  EmployeeSkill EmployeeSkill[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Employee {
+  employee_id                                             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ime                                                     String          @db.VarChar
+  priimek                                                 String?         @db.VarChar
+  department_id_fk                                        String?         @db.Uuid
+  Department_Department_departmentLeader_id_fkToDeveloper Department[]    @relation("Department_departmentLeader_id_fkToDeveloper")
+  Department_Employee_department_id_fkToDepartment        Department?     @relation("Employee_department_id_fkToDepartment", fields: [department_id_fk], references: [department_id], map: "Developer_department_id_fk_fkey")
+  EmployeeSkill                                           EmployeeSkill[]
+  Project                                                 Project[]
+  Role                                                    Role[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model EmployeeSkill {
+  employeeSkill_id String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id_fk   String?   @db.Uuid
+  skills_id_fk     String?   @db.Uuid
+  Skills           Skills?   @relation(fields: [skills_id_fk], references: [skill_id], onDelete: Restrict, onUpdate: Restrict, map: "DeveloperSkill_skills_id_fk_fkey")
+  Employee         Employee? @relation(fields: [employee_id_fk], references: [employee_id], onDelete: Cascade)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Role {
+  role_id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id_fk String   @db.Uuid
+  project_id_fk  String?  @db.Uuid
+  employeeRole   String?  @db.VarChar
+  Project        Project? @relation(fields: [project_id_fk], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "ProjectDeveloper_project_id_fk_fkey")
+  Employee       Employee @relation(fields: [employee_id_fk], references: [employee_id])
 }
