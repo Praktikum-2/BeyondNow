@@ -14,6 +14,8 @@ model Department {
   department_id                                          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                                                   String     @db.VarChar
   departmentLeader_id_fk                                 String?    @db.Uuid
+  organization_id_fk                                     String     @db.Uuid
+  organization                                           Organization @relation(fields: [organization_id_fk], references: [organization_id])
   Developer_Department_departmentLeader_id_fkToDeveloper Employee?  @relation("Department_departmentLeader_id_fkToDeveloper", fields: [departmentLeader_id_fk], references: [employee_id])
   Employee_Employee_department_id_fkToDepartment         Employee[] @relation("Employee_department_id_fkToDepartment")
 }
@@ -68,4 +70,22 @@ model Role {
   employeeRole   String?  @db.VarChar
   Project        Project? @relation(fields: [project_id_fk], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "ProjectDeveloper_project_id_fk_fkey")
   Employee       Employee @relation(fields: [employee_id_fk], references: [employee_id])
+}
+
+model User {
+  uid           String       @id @db.Uuid         // Firebase UID
+  email         String       @unique @db.VarChar
+  organization  Organization?
+
+  @@map("users")
+}
+
+model Organization {
+  organization_id String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String       @db.VarChar
+  user_uid        String       @unique @db.Uuid
+  user            User         @relation(fields: [user_uid], references: [uid])
+  departments     Department[]
+
+  @@map("organizations")
 }
