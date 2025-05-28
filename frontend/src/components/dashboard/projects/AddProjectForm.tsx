@@ -19,12 +19,11 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
 }) => {
   const [formData, setFormData] = useState({
     name: "",
-    client: "",
     description: "",
     startDate: "",
     endDate: "",
-    status: "planned",
     manager: "",
+    status: "planned",
   });
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -68,14 +67,27 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
-      ...formData,
-      id: `proj${Date.now()}`,
-      teamMembers: [],
-      requiredRoles: [],
-    });
+
+    try {
+      // spremeni fetch na actual backend ko bo vzpostavlen
+      const response = await fetch("http://localhost:3000/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData), // pošlješ samo to kar vpiše uporabnik
+      });
+
+      if (!response.ok) throw new Error("Napaka pri ustvarjanju projekta");
+
+      const data = await response.json();
+      console.log("Ustvarjen projekt:", data);
+      onSubmit(data); // lahko tudi samo zapreš modal, če ne potrebuješ odgovora
+    } catch (error) {
+      console.error("Napaka:", error);
+    }
   };
 
   return (
@@ -105,7 +117,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                 id='name'
                 name='name'
                 required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                 value={formData.name}
                 onChange={handleChange}
               />
@@ -121,7 +133,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                 id='description'
                 name='description'
                 rows={3}
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                 value={formData.description}
                 onChange={handleChange}
               />
@@ -131,7 +143,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
               <div>
                 <label
                   htmlFor='startDate'
-                  className='block text-sm font-medium text-gray-700 mb-1'>
+                  className='block text-sm font-medium text-gray-700 mb-1 p-[5px]'>
                   Začetni datum <span className='text-red-500'>*</span>
                 </label>
                 <input
@@ -139,7 +151,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                   id='startDate'
                   name='startDate'
                   required
-                  className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                  className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                   value={formData.startDate}
                   onChange={handleChange}
                 />
@@ -147,7 +159,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
               <div>
                 <label
                   htmlFor='endDate'
-                  className='block text-sm font-medium text-gray-700 mb-1'>
+                  className='block text-sm font-medium text-gray-700 mb-1 p-[5px]'>
                   Končni datum <span className='text-red-500'>*</span>
                 </label>
                 <input
@@ -155,7 +167,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                   id='endDate'
                   name='endDate'
                   required
-                  className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                  className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                   value={formData.endDate}
                   onChange={handleChange}
                 />
@@ -168,10 +180,9 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
               </label>
               <ChooseManager
                 options={managerOptions}
-                placeholder='Izberi vodjo...'
                 value={formData.manager}
                 onChange={handleManagerChange}
-                popoverRef={managerPopoverRef} // 🔧 Ključni prop
+                popoverRef={managerPopoverRef}
               />
             </div>
 
@@ -184,7 +195,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
               <select
                 id='status'
                 name='status'
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                 value={formData.status}
                 onChange={handleChange}>
                 <option value='planned'>Načrtovan</option>

@@ -46,7 +46,7 @@ export const ChooseManager: React.FC<ChooseManagerProps> = ({
           variant='outline'
           role='combobox'
           aria-expanded={open}
-          className='w-full justify-between'>
+          className='w-full justify-between font-medium text-gray-700'>
           {selected ? selected.label : placeholder}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Pool } from "pg";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -21,3 +22,15 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
     process.exit(1);
   }
 })();
+
+// link za querry
+const connectionString = process.env.DATABASE_URL;
+
+const pool = new Pool({
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false, // Supabase zahteva SSL, a certifikat ni preverjen lokalno
+  },
+});
+
+export default pool;
