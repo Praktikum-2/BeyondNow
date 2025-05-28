@@ -1,10 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import { ChooseManager } from "@/components/dashboard/projects/ChooseManager";
 
 interface AddProjectFormProps {
   onSubmit: (formData: any) => void;
   onCancel: () => void;
 }
+
+{
+  /* tu bomo fetchali podatke vseh zaposlenih --> zdaj so samo hardcodani*/
+}
+const managerOptions = [
+  { label: "Ana Novak", value: "ana" },
+  { label: "Marko Kranjc", value: "marko" },
+  { label: "Eva Zupan", value: "eva" },
+];
 
 const AddProjectForm: React.FC<AddProjectFormProps> = ({
   onSubmit,
@@ -17,6 +27,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     startDate: "",
     endDate: "",
     status: "planned",
+    manager: "",
   });
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -88,7 +99,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                 onChange={handleChange}
               />
             </div>
-
+            {/*
             <div>
               <label
                 htmlFor='client'
@@ -104,7 +115,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                 value={formData.client}
                 onChange={handleChange}
               />
-            </div>
+            </div> */}
 
             <div>
               <label
@@ -155,6 +166,19 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                   onChange={handleChange}
                 />
               </div>
+            </div>
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                Vodja projekta
+              </label>
+              <ChooseManager
+                options={managerOptions}
+                placeholder='Izberi vodjo...'
+                value={formData.manager}
+                onChange={(newValue) =>
+                  setFormData((prev) => ({ ...prev, manager: newValue }))
+                }
+              />
             </div>
 
             <div>
