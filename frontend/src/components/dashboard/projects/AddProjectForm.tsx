@@ -7,9 +7,6 @@ interface AddProjectFormProps {
   onCancel: () => void;
 }
 
-{
-  /* tu bomo fetchali podatke vseh zaposlenih --> zdaj so samo hardcodani*/
-}
 const managerOptions = [
   { label: "Ana Novak", value: "ana" },
   { label: "Marko Kranjc", value: "marko" },
@@ -31,10 +28,17 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
   });
 
   const modalRef = useRef<HTMLDivElement>(null);
+  const managerPopoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(target) &&
+        !managerPopoverRef.current?.contains(target)
+      ) {
         onCancel();
       }
     };
@@ -54,6 +58,13 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleManagerChange = (newValue: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      manager: newValue,
     }));
   };
 
@@ -99,23 +110,6 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                 onChange={handleChange}
               />
             </div>
-            {/*
-            <div>
-              <label
-                htmlFor='client'
-                className='block text-sm font-medium text-gray-700 mb-1'>
-                Stranka <span className='text-red-500'>*</span>
-              </label>
-              <input
-                type='text'
-                id='client'
-                name='client'
-                required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                value={formData.client}
-                onChange={handleChange}
-              />
-            </div> */}
 
             <div>
               <label
@@ -167,6 +161,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                 />
               </div>
             </div>
+
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-1'>
                 Vodja projekta
@@ -175,9 +170,8 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                 options={managerOptions}
                 placeholder='Izberi vodjo...'
                 value={formData.manager}
-                onChange={(newValue) =>
-                  setFormData((prev) => ({ ...prev, manager: newValue }))
-                }
+                onChange={handleManagerChange}
+                popoverRef={managerPopoverRef} // 🔧 Ključni prop
               />
             </div>
 

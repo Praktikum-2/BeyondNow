@@ -1,44 +1,43 @@
-"use client";
-
-import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import React from "react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/Button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
-// Tipi za propse
-interface Option {
-  value: string;
+interface ManagerOption {
   label: string;
+  value: string;
 }
 
 interface ChooseManagerProps {
-  options: Option[];
-  value: string;
-  onChange: (value: string) => void;
+  options: ManagerOption[];
   placeholder?: string;
+  value: string;
+  onChange: (newValue: string) => void;
+  popoverRef?: React.RefObject<HTMLDivElement | null>; // dodan prop
 }
 
 export const ChooseManager: React.FC<ChooseManagerProps> = ({
   options,
+  placeholder = "Izberi vodjo...",
   value,
   onChange,
-  placeholder = "Izberi možnost...",
+  popoverRef,
 }) => {
   const [open, setOpen] = React.useState(false);
+
+  const selected = options.find((opt) => opt.value === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -48,37 +47,34 @@ export const ChooseManager: React.FC<ChooseManagerProps> = ({
           role='combobox'
           aria-expanded={open}
           className='w-full justify-between'>
-          {value
-            ? options.find((option) => option.value === value)?.label
-            : placeholder}
+          {selected ? selected.label : placeholder}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-full p-0'>
+
+      <PopoverContent ref={popoverRef} className='w-full p-0' align='start'>
         <Command>
           <CommandInput placeholder='Poišči...' className='h-9' />
-          <CommandList>
-            <CommandEmpty>Ni zadetkov.</CommandEmpty>
-            <CommandGroup>
-              {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={(currentValue) => {
-                    onChange(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}>
-                  {option.label}
-                  <Check
-                    className={cn(
-                      "ml-auto h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
+          <CommandEmpty>Ni rezultatov.</CommandEmpty>
+          <CommandGroup>
+            {options.map((option) => (
+              <CommandItem
+                key={option.value}
+                value={option.value}
+                onSelect={(val) => {
+                  onChange(val);
+                  setOpen(false);
+                }}>
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    value === option.value ? "opacity-100" : "opacity-0"
+                  )}
+                />
+                {option.label}
+              </CommandItem>
+            ))}
+          </CommandGroup>
         </Command>
       </PopoverContent>
     </Popover>
