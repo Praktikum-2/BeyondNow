@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
-import Layout from "../components/dashboard/layout/Layout";
+import Layout from "@/components/dashboard/layout/Layout";
 
 const titleMap: Record<string, string> = {
   "": "Nadzorna plošča",

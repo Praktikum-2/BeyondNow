@@ -1,5 +1,5 @@
 import React from "react";
-import type { DepartmentUtilization } from "../../../types/types";
+import type { DepartmentUtilization } from "@/types/types";
 
 interface DepartmentUtilizationChartProps {
   data: DepartmentUtilization[];

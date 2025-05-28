@@ -1,7 +1,7 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import Button from "../ui/ButtonLanding";
-import Container from "../ui/ContainerLanding";
+import Button from "@/components/ui/ButtonLanding";
+import Container from "@/components/ui/ContainerLanding";
 import { Link } from "react-router-dom";
 
 const Hero: React.FC = () => {

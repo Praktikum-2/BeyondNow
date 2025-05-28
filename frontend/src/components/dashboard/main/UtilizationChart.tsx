@@ -1,5 +1,5 @@
 import React from "react";
-import type { UtilizationData } from "../../../types/types";
+import type { UtilizationData } from "@/types/types";
 
 interface UtilizationChartProps {
   data: UtilizationData[];

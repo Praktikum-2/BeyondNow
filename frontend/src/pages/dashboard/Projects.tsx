@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Plus, Search, Filter, Calendar, Users, Clock } from "lucide-react";
-import type { Project } from "../../types/types";
-import { projects as initialProjects } from "../../data/mockData";
-import AddProjectForm from "../../components/dashboard/projects/AddProjectForm";
+import type { Project } from "@/types/types";
+import { projects as initialProjects } from "@/data/mockData";
+import AddProjectForm from "@/components/dashboard/projects/AddProjectForm";
 
 const Projects: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>(initialProjects);

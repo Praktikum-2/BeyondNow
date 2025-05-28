@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BarChart3, Download, Calendar } from "lucide-react";
-import { departmentUtilization } from "../../data/mockData";
+import { departmentUtilization } from "@/data/mockData";
 
 const Reports: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState("utilization");
