@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowUpRight, ArrowDownRight, HelpCircle } from "lucide-react";
-import type { Metric } from "../../../types/types";
+import type { Metric } from "@/types/types";
 
 interface MetricCardProps {
   metric: Metric;

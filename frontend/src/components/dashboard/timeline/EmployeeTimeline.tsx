@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
-import type { Employee, TimelineRow } from "../../../types/types";
+import type { Employee, TimelineRow } from "@/types/types";
 
 const generateDates = (startDate: Date, days: number) => {
   const dates = [];
@@ -80,7 +80,6 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
             status = "partially-booked";
           }
 
-          // Check for overbooking (allocation > 100%)
           const totalAllocation = availabilityRecord.projects.reduce(
             (sum, project) => sum + project.allocation,
             0
@@ -110,7 +109,6 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
 
   const timelineRows = generateTimelineRows();
 
-  // Get cell color based on status
   const getCellColor = (status: string) => {
     switch (status) {
       case "available":
@@ -126,7 +124,6 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
     }
   };
 
-  // Status indicator function
   const StatusIndicator = ({ status }: { status: string }) => {
     let bgColor = "";
     let text = "";

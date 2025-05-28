@@ -1,7 +1,7 @@
 import React from "react";
-import EmployeeTimeline from "../../components/dashboard/timeline/EmployeeTimeline";
-import ProjectTimeline from "../../components/dashboard/timeline/ProjectTimeline";
-import { employees, projects } from "../../data/mockData";
+import EmployeeTimeline from "@/components/dashboard/timeline/EmployeeTimeline";
+import ProjectTimeline from "@/components/dashboard/timeline/ProjectTimeline";
+import { employees, projects } from "@/data/mockData";
 
 const Timeline: React.FC = () => {
   return (

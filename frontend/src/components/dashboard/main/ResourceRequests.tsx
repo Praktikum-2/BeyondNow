@@ -1,6 +1,6 @@
 import React from "react";
 import { Calendar, Clock } from "lucide-react";
-import type { ResourceRequest, Project } from "../../../types/types";
+import type { ResourceRequest, Project } from "@/types/types";
 
 interface ResourceRequestsProps {
   requests: ResourceRequest[];

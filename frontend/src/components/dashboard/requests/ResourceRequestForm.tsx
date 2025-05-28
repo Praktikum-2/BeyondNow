@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import type { Project } from "../../../types/types";
+import type { Project } from "@/types/types";
 
 interface ResourceRequestFormProps {
   projects: Project[];

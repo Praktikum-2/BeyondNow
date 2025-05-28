@@ -1,6 +1,6 @@
 import React from "react";
 import { Twitter, Instagram, Linkedin, Github } from "lucide-react";
-import Container from "../ui/ContainerLanding";
+import Container from "@/components/ui/ContainerLanding";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();

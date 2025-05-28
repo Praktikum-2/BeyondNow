@@ -1,9 +1,9 @@
 import React from "react";
-import DashboardMetrics from "../../components/dashboard/main/DashboardMetrics";
-import UtilizationChart from "../../components/dashboard/main/UtilizationChart";
-import ProjectOverview from "../../components/dashboard/main/ProjectOverview";
-import ResourceRequests from "../../components/dashboard/main/ResourceRequests";
-import DepartmentUtilizationChart from "../../components/dashboard/main/DepartmentUtilizationChart";
+import DashboardMetrics from "@/components/dashboard/main/DashboardMetrics";
+import UtilizationChart from "@/components/dashboard/main/UtilizationChart";
+import ProjectOverview from "@/components/dashboard/main/ProjectOverview";
+import ResourceRequests from "@/components/dashboard/main/ResourceRequests";
+import DepartmentUtilizationChart from "@/components/dashboard/main/DepartmentUtilizationChart";
 import {
   dashboardMetrics,
   utilizationData,

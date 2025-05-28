@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, Users } from "lucide-react";
-import type {
-  Project,
-  Employee,
-  ProjectTimelineRow,
-} from "../../../types/types";
+import type { Project, Employee, ProjectTimelineRow } from "@/types/types";
 
 const generateDates = (startDate: Date, days: number) => {
   const dates = [];

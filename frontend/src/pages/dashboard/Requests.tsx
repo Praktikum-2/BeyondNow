@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
-import RequestsTable from "../../components/dashboard/requests/RequestsTable";
-import ResourceRequestForm from "../../components/dashboard/requests/ResourceRequestForm";
-import { resourceRequests, projects } from "../../data/mockData";
+import RequestsTable from "@/components/dashboard/requests/RequestsTable";
+import ResourceRequestForm from "@/components/dashboard/requests/ResourceRequestForm";
+import { resourceRequests, projects } from "@/data/mockData";
 
 const Requests: React.FC = () => {
   const [showRequestForm, setShowRequestForm] = useState(false);

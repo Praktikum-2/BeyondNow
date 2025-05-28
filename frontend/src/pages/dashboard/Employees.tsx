@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Plus, Search, Filter, Download } from "lucide-react";
-import type { Employee } from "../../types/types";
-import { employees as initialEmployees } from "../../data/mockData";
-import AddEmployeeForm from "../../components/dashboard/employees/AddEmployeeForm";
+import type { Employee } from "@/types/types";
+import { employees as initialEmployees } from "@/data/mockData";
+import AddEmployeeForm from "@/components/dashboard/employees/AddEmployeeForm";
 
 const Employees: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
