@@ -17,14 +17,14 @@ import {
 
 interface ManagerOption {
   label: string;
-  value: string;
+  value: number;
 }
 
 interface ChooseManagerProps {
   options: ManagerOption[];
   placeholder?: string;
-  value: string;
-  onChange: (newValue: string) => void;
+  value: number | null;
+  onChange: (newValue: number) => void;
   popoverRef?: React.RefObject<HTMLDivElement | null>; // dodan prop
 }
 
@@ -37,7 +37,7 @@ export const ChooseManager: React.FC<ChooseManagerProps> = ({
 }) => {
   const [open, setOpen] = React.useState(false);
 
-  const selected = options.find((opt) => opt.value === value);
+  const selected = options.find((opt) => opt.value == value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -60,9 +60,9 @@ export const ChooseManager: React.FC<ChooseManagerProps> = ({
             {options.map((option) => (
               <CommandItem
                 key={option.value}
-                value={option.value}
-                onSelect={(val) => {
-                  onChange(val);
+                value={option.value.toString()}
+                onSelect={() => {
+                  onChange(option.value);
                   setOpen(false);
                 }}>
                 <Check

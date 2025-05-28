@@ -8,9 +8,9 @@ interface AddProjectFormProps {
 }
 
 const managerOptions = [
-  { label: "Ana Novak", value: "ana" },
-  { label: "Marko Kranjc", value: "marko" },
-  { label: "Eva Zupan", value: "eva" },
+  { label: "Ana Novak", value: 1 },
+  { label: "Marko Kranjc", value: 2 },
+  { label: "Eva Zupan", value: 3 },
 ];
 
 const AddProjectForm: React.FC<AddProjectFormProps> = ({
@@ -22,7 +22,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     description: "",
     startDate: "",
     endDate: "",
-    manager: "",
+    manager: null as number | null,
     status: "planned",
   });
 
@@ -60,7 +60,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     }));
   };
 
-  const handleManagerChange = (newValue: string) => {
+  const handleManagerChange = (newValue: number) => {
     setFormData((prev) => ({
       ...prev,
       manager: newValue,
