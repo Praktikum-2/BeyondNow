@@ -11,3 +11,5 @@ employeeRoutes.post("/createNew", createEmployee);
 
 // pridovivanje zaposlenih
 employeeRoutes.post("/getAll", getEmployees);
+
+export default employeeRoutes;

@@ -10,7 +10,7 @@ export const createProject = (req: Request, res: Response) => {
 
   console.log("Creating project:", project);
 
-  res.status(201).json({ message: "Project created successfully", project });
+  res.status(201).json({ message: "Project created successfully: ", project });
 };
 
 // pridobivanje projektov
