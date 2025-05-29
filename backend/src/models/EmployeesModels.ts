@@ -4,13 +4,35 @@ export const getAllEmployees = async () => {
 };
 
 export const createNewEmployee = async (Rawdata: {
-  // fixaj se kaj so ustrezni podatki
   ime: string;
   priimek: string;
   email: string;
   department_id_fk: string;
+  skills: string[]; // array of skill_id (UUID strings)
 }) => {
-  const data = Rawdata;
-  console.log("ustvarjam zaposlenega: ", data.ime, data.priimek);
-  return await prisma.employee.create({ data });
+  console.log("zacenjam ustvarjanje zaposlenega");
+  const { ime, priimek, email, department_id_fk, skills } = Rawdata;
+
+  const data = {
+    ime,
+    priimek,
+    email,
+    department_id_fk,
+    EmployeeSkill: {
+      create: skills.map((skillId) => ({
+        skills_id_fk: skillId,
+      })),
+    },
+  };
+
+  console.log("Ustvarjam zaposlenega:", ime, priimek);
+
+  const rezultatKreiranja = await prisma.employee.create({
+    data,
+    include: {
+      EmployeeSkill: true,
+    },
+  });
+
+  return "zaposleni je ustvarjen: " + rezultatKreiranja;
 };

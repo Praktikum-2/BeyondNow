@@ -11,13 +11,13 @@ datasource db {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Department {
-  department_id                                          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                                                   String       @db.VarChar
-  departmentLeader_id_fk                                 String?      @db.Uuid
-  organization_id_fk                                     String       @db.Uuid
-  Developer_Department_departmentLeader_id_fkToDeveloper Employee?    @relation("Department_departmentLeader_id_fkToDeveloper", fields: [departmentLeader_id_fk], references: [employee_id])
-  organization                                           Organization @relation(fields: [organization_id_fk], references: [organization_id])
-  Employee_Employee_department_id_fkToDepartment         Employee[]   @relation("Employee_department_id_fkToDepartment")
+  department_id                                          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                                                   String        @db.VarChar
+  departmentLeader_id_fk                                 String?       @db.Uuid
+  organization_id_fk                                     String        @db.Uuid
+  Developer_Department_departmentLeader_id_fkToDeveloper Employee?     @relation("Department_departmentLeader_id_fkToDeveloper", fields: [departmentLeader_id_fk], references: [employee_id])
+  organization                                           organizations @relation(fields: [organization_id_fk], references: [organization_id])
+  Employee_Employee_department_id_fkToDepartment         Employee[]    @relation("Employee_department_id_fkToDepartment")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -48,6 +48,7 @@ model Employee {
   ime                                                     String          @db.VarChar
   priimek                                                 String?         @db.VarChar
   department_id_fk                                        String?         @db.Uuid
+  email                                                   String?         @db.VarChar
   Department_Department_departmentLeader_id_fkToDeveloper Department[]    @relation("Department_departmentLeader_id_fkToDeveloper")
   Department_Employee_department_id_fkToDepartment        Department?     @relation("Employee_department_id_fkToDepartment", fields: [department_id_fk], references: [department_id], map: "Developer_department_id_fk_fkey")
   EmployeeSkill                                           EmployeeSkill[]
@@ -74,16 +75,19 @@ model Role {
   Employee       Employee @relation(fields: [employee_id_fk], references: [employee_id])
 }
 
-model Organization {
-  organization_id String       @id(map: "organizations_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+model organizations {
+  organization_id String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name            String       @db.VarChar
-  user_uid        String       @unique(map: "organizations_user_uid_key") @db.Uuid
+  user_uid        String       @unique @db.VarChar(50)
   departments     Department[]
-  User            User         @relation(fields: [user_uid], references: [uid], map: "organizations_user_uid_fkey")
+  users           users        @relation(fields: [user_uid], references: [uid])
 }
 
-model User {
-  uid          String        @id(map: "users_pkey") @db.Uuid
-  email        String        @unique(map: "users_email_key") @db.VarChar
-  Organization Organization?
+model users {
+  uid           String         @id @db.VarChar(50)
+  email         String         @unique @db.VarChar
+  name          String?        @db.VarChar
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime
+  organizations organizations?
 }

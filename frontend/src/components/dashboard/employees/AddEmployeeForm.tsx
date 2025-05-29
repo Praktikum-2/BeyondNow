@@ -35,7 +35,7 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
     ime: "",
     priimek: "",
     email: "",
-    department: "",
+    department_id_fk: "",
     skills: [] as string[], // direktno v formData
   });
   const [skillOptions, setSkillOptions] = useState<SkillOption[]>([]);
@@ -77,11 +77,29 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
-      ...formData,
-    });
+    console.log(formData);
+    try {
+      const response = await fetch(
+        "http://localhost:3000/employees/createNew",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (!response.ok) throw new Error("ustvarjanje zaposlenega ni uspelo");
+
+      const status = await response.json();
+      console.log(status);
+      onSubmit(status);
+      onCancel();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -151,19 +169,21 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
             </div>
             <div>
               <label
-                htmlFor='department'
+                htmlFor='department_id_fk'
                 className='block text-sm font-medium text-gray-700 mb-1'>
                 Oddelek <span className='text-red-500'>*</span>
               </label>
               <select
-                id='department'
-                name='department'
+                id='department_id_fk'
+                name='department_id_fk'
                 required
                 className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
-                value={formData.department}
+                value={formData.department_id_fk}
                 onChange={handleChange}>
                 <option value=''>Izberi oddelek</option>
-                <option value='Engineering'>Engineering</option>
+                <option value='28dd61fe-35a0-46da-9c30-670b11492595'>
+                  Engineering
+                </option>
                 <option value='Design'>Design</option>
                 <option value='Management'>Management</option>
                 <option value='Marketing'>Marketing</option>
