@@ -10,6 +10,6 @@ const employeeRoutes = Router();
 employeeRoutes.post("/createNew", createEmployee);
 
 // pridovivanje zaposlenih
-employeeRoutes.post("/getAll", getEmployees);
+employeeRoutes.get("/getAll", getEmployees);
 
-export default employeeRoutes;
+export { employeeRoutes };

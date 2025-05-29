@@ -7,6 +7,7 @@ export const createNewEmployee = async (Rawdata: {
   // fixaj se kaj so ustrezni podatki
   ime: string;
   priimek: string;
+  email: string;
   department_id_fk: string;
 }) => {
   const data = Rawdata;

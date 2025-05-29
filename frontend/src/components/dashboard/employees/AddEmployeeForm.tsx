@@ -11,13 +11,11 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
   onCancel,
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    ime: "",
+    priimek: "",
     email: "",
-    role: "",
     department: "",
     skills: "",
-    imageUrl:
-      "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150",
   });
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -79,17 +77,33 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
           <div className='space-y-4'>
             <div>
               <label
-                htmlFor='name'
+                htmlFor='ime'
                 className='block text-sm font-medium text-gray-700 mb-1'>
-                Ime in priimek <span className='text-red-500'>*</span>
+                Ime<span className='text-red-500'>*</span>
               </label>
               <input
                 type='text'
-                id='name'
-                name='name'
+                id='ime'
+                name='ime'
                 required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                value={formData.name}
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
+                value={formData.ime}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor='priimek'
+                className='block text-sm font-medium text-gray-700 mb-1'>
+                Priimek <span className='text-red-500'>*</span>
+              </label>
+              <input
+                type='text'
+                id='priimek'
+                name='priimek'
+                required
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
+                value={formData.priimek}
                 onChange={handleChange}
               />
             </div>
@@ -105,27 +119,9 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
                 id='email'
                 name='email'
                 required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                 value={formData.email}
                 onChange={handleChange}
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor='role'
-                className='block text-sm font-medium text-gray-700 mb-1'>
-                Vloga <span className='text-red-500'>*</span>
-              </label>
-              <input
-                type='text'
-                id='role'
-                name='role'
-                required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                value={formData.role}
-                onChange={handleChange}
-                placeholder='npr. Frontend Developer'
               />
             </div>
 
@@ -139,7 +135,7 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
                 id='department'
                 name='department'
                 required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                 value={formData.department}
                 onChange={handleChange}>
                 <option value=''>Izberi oddelek</option>
@@ -161,7 +157,7 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
                 type='text'
                 id='skills'
                 name='skills'
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                 value={formData.skills}
                 onChange={handleChange}
                 placeholder='Veščine, ločene z vejicami'

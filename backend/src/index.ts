@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { prisma } from "./db";
 import { projectRoutes } from "./routes/ProjectsRoutes";
+import { employeeRoutes } from "./routes/employeesRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +12,7 @@ var dotenv = require("dotenv");
 app.use(cors());
 app.use(express.json());
 app.use("/projects", projectRoutes);
+app.use("/employees", employeeRoutes);
 
 app.get("/", async (req, res) => {
   const count = await prisma.employee.count();

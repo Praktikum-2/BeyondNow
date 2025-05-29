@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { getAllProjects, createNewProject } from "../models/ProjectsModels";
 
 //kreiranje projecta
-export const createProject = (req: Request, res: Response) => {
+export const createProject = async (req: Request, res: Response) => {
   //da vidim kaki project se bi rad ustvaril
   console.log(req.body);
 
-  const project = createNewProject(req.body);
+  const project = await createNewProject(req.body);
 
   console.log("Creating project:", project);
 
