@@ -1,10 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import { ChooseSkills } from "./ChooseSkills";
 
 interface AddEmployeeFormProps {
   onSubmit: (formData: any) => void;
   onCancel: () => void;
 }
+
+interface SkillOption {
+  label: string;
+  value: string;
+}
+
+const fetchSkills = async (): Promise<SkillOption[]> => {
+  try {
+    const res = await fetch("http://localhost:3000/skills/getAll");
+    if (!res.ok) throw new Error("Napaka pri pridobivanju skillov");
+    const data = await res.json();
+    return data.map((skill: any) => ({
+      label: skill.skill,
+      value: skill.skill_id || skill.name,
+    }));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
 
 const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
   onSubmit,
@@ -15,14 +36,25 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
     priimek: "",
     email: "",
     department: "",
-    skills: "",
+    skills: [] as string[], // direktno v formData
   });
-
+  const [skillOptions, setSkillOptions] = useState<SkillOption[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
+  const skillsPopoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetchSkills().then(setSkillOptions);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(target) &&
+        skillsPopoverRef.current &&
+        !skillsPopoverRef.current.contains(target)
+      ) {
         onCancel();
       }
     };
@@ -47,14 +79,8 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const skillsArray = formData.skills
-      .split(",")
-      .map((skill) => skill.trim())
-      .filter(Boolean);
     onSubmit({
       ...formData,
-      skills: skillsArray,
-      id: `emp${Date.now()}`,
     });
   };
 
@@ -107,7 +133,6 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
                 onChange={handleChange}
               />
             </div>
-
             <div>
               <label
                 htmlFor='email'
@@ -124,7 +149,6 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
                 onChange={handleChange}
               />
             </div>
-
             <div>
               <label
                 htmlFor='department'
@@ -148,24 +172,17 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
             </div>
 
             <div>
-              <label
-                htmlFor='skills'
-                className='block text-sm font-medium text-gray-700 mb-1'>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
                 Veščine
               </label>
-              <input
-                type='text'
-                id='skills'
-                name='skills'
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
-                value={formData.skills}
-                onChange={handleChange}
-                placeholder='Veščine, ločene z vejicami'
+              <ChooseSkills
+                options={skillOptions}
+                selectedSkills={formData.skills}
+                onChange={(newSkills) =>
+                  setFormData((prev) => ({ ...prev, skills: newSkills }))
+                }
+                popoverRef={skillsPopoverRef}
               />
-              <p className='mt-1 text-xs text-gray-500'>
-                Vnesi veščine, ločene z vejicami (npr. React, TypeScript, UI
-                Design)
-              </p>
             </div>
           </div>
 
