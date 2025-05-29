@@ -7,11 +7,10 @@ interface AddProjectFormProps {
   onCancel: () => void;
 }
 
-const managerOptions = [
-  { label: "Ana Novak", value: "f1e505bc-681a-4a3b-a4eb-8e4afe8c227f" },
-  { label: "Marko Kranjc", value: "2" },
-  { label: "Eva Zupan", value: "3" },
-];
+interface ManagerOption {
+  label: string;
+  value: string;
+}
 
 const AddProjectForm: React.FC<AddProjectFormProps> = ({
   onSubmit,
@@ -26,9 +25,38 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     status: "planned",
   });
 
+  // Stanje za seznam managerjev (options)
+  const [managerOptionsList, setManagerOptionsList] = useState<ManagerOption[]>(
+    []
+  );
+
   const modalRef = useRef<HTMLDivElement>(null);
   const managerPopoverRef = useRef<HTMLDivElement>(null);
 
+  // Fetch managerjev ob mountu komponente
+  useEffect(() => {
+    const fetchManagers = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/employees/getAll");
+        if (!response.ok) throw new Error("Napaka pri pridobivanju zaposlenih");
+        const employees = await response.json();
+
+        const options = employees.map((emp: any) => ({
+          label: `${emp.ime} ${emp.priimek}`,
+          value: emp.employee_id,
+        }));
+
+        setManagerOptionsList(options);
+      } catch (error) {
+        console.error("Napaka pri fetchanju managerjev:", error);
+        setManagerOptionsList([]);
+      }
+    };
+
+    fetchManagers();
+  }, []);
+
+  // Zapiranje modala ob kliku zunaj
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node;
@@ -48,6 +76,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     };
   }, [onCancel]);
 
+  // Spreminjanje polj v formi (input, textarea, select)
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -60,6 +89,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     }));
   };
 
+  // Spreminjanje managerja (iz ChooseManager)
   const handleManagerChange = (newValue: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -67,24 +97,24 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     }));
   };
 
+  // Submit forma
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // spremeni fetch na actual backend ko bo vzpostavlen
       const response = await fetch("http://localhost:3000/projects/createNew", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData), // pošlješ samo to kar vpiše uporabnik
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) throw new Error("Napaka pri ustvarjanju projekta");
 
       const data = await response.json();
       console.log("Ustvarjen projekt:", data);
-      onSubmit(data); // lahko tudi samo zapreš modal, če ne potrebuješ odgovora
+      onSubmit(data);
     } catch (error) {
       console.error("Napaka:", error);
     }
@@ -99,7 +129,8 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
           <h2 className='text-lg font-medium text-gray-900'>Nov projekt</h2>
           <button
             onClick={onCancel}
-            className='text-gray-400 hover:text-gray-500 transition-colors cursor-pointer'>
+            className='text-gray-400 hover:text-gray-500 transition-colors cursor-pointer'
+            aria-label='Zapri'>
             <X size={20} />
           </button>
         </div>
@@ -179,7 +210,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
                 Vodja projekta
               </label>
               <ChooseManager
-                options={managerOptions}
+                options={managerOptionsList}
                 value={formData.projectManager_id}
                 onChange={handleManagerChange}
                 popoverRef={managerPopoverRef}
