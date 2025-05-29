@@ -12,8 +12,11 @@ const Projects: React.FC = () => {
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.client.toLowerCase().includes(searchQuery.toLowerCase());
+      (project.name?.toLowerCase().includes(searchQuery.toLowerCase()) ??
+        false) ||
+      (project.client?.toLowerCase().includes(searchQuery.toLowerCase()) ??
+        false);
+
     const matchesStatus =
       selectedStatus === "all" || project.status === selectedStatus;
 

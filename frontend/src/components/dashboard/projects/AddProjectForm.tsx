@@ -8,9 +8,9 @@ interface AddProjectFormProps {
 }
 
 const managerOptions = [
-  { label: "Ana Novak", value: 1 },
-  { label: "Marko Kranjc", value: 2 },
-  { label: "Eva Zupan", value: 3 },
+  { label: "Ana Novak", value: "f1e505bc-681a-4a3b-a4eb-8e4afe8c227f" },
+  { label: "Marko Kranjc", value: "2" },
+  { label: "Eva Zupan", value: "3" },
 ];
 
 const AddProjectForm: React.FC<AddProjectFormProps> = ({
@@ -20,9 +20,9 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    startDate: "",
-    endDate: "",
-    manager: null as number | null,
+    start_date: "",
+    end_date: "",
+    projectManager_id: null as string | null,
     status: "planned",
   });
 
@@ -60,10 +60,10 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     }));
   };
 
-  const handleManagerChange = (newValue: number) => {
+  const handleManagerChange = (newValue: string) => {
     setFormData((prev) => ({
       ...prev,
-      manager: newValue,
+      projectManager_id: newValue,
     }));
   };
 
@@ -72,7 +72,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
 
     try {
       // spremeni fetch na actual backend ko bo vzpostavlen
-      const response = await fetch("http://localhost:3000/api/projects", {
+      const response = await fetch("http://localhost:3000/projects/createNew", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -142,33 +142,33 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
             <div className='grid grid-cols-2 gap-4'>
               <div>
                 <label
-                  htmlFor='startDate'
+                  htmlFor='start_date'
                   className='block text-sm font-medium text-gray-700 mb-1 p-[5px]'>
                   Začetni datum <span className='text-red-500'>*</span>
                 </label>
                 <input
                   type='date'
-                  id='startDate'
-                  name='startDate'
+                  id='start_date'
+                  name='start_date'
                   required
                   className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
-                  value={formData.startDate}
+                  value={formData.start_date}
                   onChange={handleChange}
                 />
               </div>
               <div>
                 <label
-                  htmlFor='endDate'
+                  htmlFor='end_date'
                   className='block text-sm font-medium text-gray-700 mb-1 p-[5px]'>
                   Končni datum <span className='text-red-500'>*</span>
                 </label>
                 <input
                   type='date'
-                  id='endDate'
-                  name='endDate'
+                  id='end_date'
+                  name='end_date'
                   required
                   className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
-                  value={formData.endDate}
+                  value={formData.end_date}
                   onChange={handleChange}
                 />
               </div>
@@ -180,7 +180,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
               </label>
               <ChooseManager
                 options={managerOptions}
-                value={formData.manager}
+                value={formData.projectManager_id}
                 onChange={handleManagerChange}
                 popoverRef={managerPopoverRef}
               />

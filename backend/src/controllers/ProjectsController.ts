@@ -3,6 +3,9 @@ import { getAllProjects, createNewProject } from "../models/ProjectsModels";
 
 //kreiranje projecta
 export const createProject = (req: Request, res: Response) => {
+  //da vidim kaki project se bi rad ustvaril
+  console.log(req.body);
+
   const project = createNewProject(req.body);
 
   console.log("Creating project:", project);
