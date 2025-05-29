@@ -15,14 +15,14 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  console.log("=== AUTH MIDDLEWARE ===");
+  // console.log("=== AUTH MIDDLEWARE ===");
 
   try {
     const authHeader = req.headers.authorization;
-    console.log("Auth header present:", !!authHeader);
+    // console.log("Auth header present:", !!authHeader);
 
     if (!authHeader) {
-      console.log("❌ No authorization header");
+      console.log("No authorization header");
       res.status(401).json({
         error: "No authorization header provided",
         code: "auth/no-token",
@@ -32,7 +32,7 @@ export const authMiddleware = async (
 
     const token = authHeader.split(" ")[1];
     if (!token) {
-      console.log("❌ No token in header");
+      console.log("No token in header");
       res.status(401).json({
         error: "No token provided",
         code: "auth/no-token",
@@ -40,14 +40,14 @@ export const authMiddleware = async (
       return;
     }
 
-    console.log("🔄 Verifying Firebase token...");
+    // console.log("🔄 Verifying Firebase token...");
     const decodedToken = await admin.auth().verifyIdToken(token);
-    console.log("✅ Token verified. Decoded:", {
-      uid: decodedToken.uid,
-      email: decodedToken.email,
-      name: decodedToken.name,
-      email_verified: decodedToken.email_verified,
-    });
+    // console.log("Token verified. Decoded:", {
+    //   uid: decodedToken.uid,
+    //   email: decodedToken.email,
+    //   name: decodedToken.name,
+    //   email_verified: decodedToken.email_verified,
+    // });
 
     req.firebaseUser = {
       uid: decodedToken.uid,
@@ -58,7 +58,7 @@ export const authMiddleware = async (
 
     next();
   } catch (error: any) {
-    console.error("❌ Auth middleware error:", error);
+    console.error("Auth middleware error:", error);
     console.error("Error code:", error.code);
     console.error("Error stack:", error.stack);
 

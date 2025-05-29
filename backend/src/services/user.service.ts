@@ -5,32 +5,32 @@ export const findOrCreateUserByFirebase = async (
   email: string | undefined,
   name?: string
 ) => {
-  console.log("=== USER SERVICE ===");
-  console.log("Input params:", { uid, email, name });
+  // console.log("=== USER SERVICE ===");
+  // console.log("Input params:", { uid, email, name });
 
   try {
-    console.log("🔄 Checking if user exists with UID:", uid);
+    //console.log("Checking if user exists with UID:", uid);
     let user = await prisma.user.findUnique({
       where: { uid: uid },
     });
-    console.log("Existing user found:", !!user);
+    // console.log("Existing user found:", !!user);
 
     if (user) {
-      console.log("✅ User exists, checking for updates...");
+      // console.log("User exists, checking for updates...");
       if (email && user.email !== email) {
-        console.log("🔄 Updating user email...");
+        console.log("Updating user email...");
         user = await prisma.user.update({
           where: { uid: uid },
           data: { email: email },
         });
-        console.log("✅ User email updated");
+        console.log("User email updated");
       }
       return user;
     }
 
-    console.log("🔄 Creating new user...");
+    // console.log("Creating new user...");
     if (!email) {
-      console.log("❌ No email provided for new user");
+      console.log("No email provided for new user");
       throw new Error(
         "Email is required to create a user account. Please ensure your login method provides an email address."
       );
@@ -45,15 +45,15 @@ export const findOrCreateUserByFirebase = async (
       },
     });
 
-    console.log("✅ New user created:", user);
+    // console.log("New user created:", user);
     return user;
   } catch (error: any) {
-    console.error("❌ Error in findOrCreateUserByFirebase:", error);
+    console.error("Error in findOrCreateUserByFirebase:", error);
     console.error("Error code:", error.code);
     console.error("Error stack:", error.stack);
 
     if (error.code === "P2002") {
-      console.log("❌ Unique constraint violation");
+      console.log("Unique constraint violation");
       throw new Error("An account with this email already exists.");
     }
 
