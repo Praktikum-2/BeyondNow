@@ -42,11 +42,34 @@ export function SignupForm({
     const email = emailRef.current?.value.trim() || "";
     const password = passwordRef.current?.value || "";
 
+    if (password.length < 6) {
+      setLoading(false);
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       navigate("/dashboard");
     } catch (err: any) {
-      setError("Failed to signup. Please check your credentials.");
+      console.error("Firebase Signup Error:", err);
+      let message = "Failed to sign up. Please try again.";
+
+      switch (err.code) {
+        case "auth/email-already-in-use":
+          message = "This email is already in use.";
+          break;
+        case "auth/invalid-email":
+          message = "The email address is invalid.";
+          break;
+        case "auth/weak-password":
+          message = "The password is too weak.";
+          break;
+        default:
+          message = err.message || message;
+      }
+
+      setError(message);
     } finally {
       setLoading(false);
     }

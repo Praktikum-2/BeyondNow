@@ -73,7 +73,7 @@ model Role {
 }
 
 model User {
-  uid           String       @id @db.Uuid         // Firebase UID
+  uid           String       @id @db.VarChar(50) // Firebase UID
   email         String       @unique @db.VarChar
   organization  Organization?
 

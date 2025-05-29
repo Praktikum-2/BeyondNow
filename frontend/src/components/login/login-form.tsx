@@ -22,6 +22,25 @@ import { Label } from "@/components/ui/label";
 
 import { FaGoogle, FaGithub } from "react-icons/fa";
 
+async function syncUserWithBackend(idToken: string) {
+  console.log("HERE");
+  console.log("ID TOKEN: ", idToken);
+  try {
+    const res = await fetch("http://localhost:3000/api/auth/sync", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+    console.log("Backend sync response:", data);
+  } catch (error) {
+    console.error("Failed to sync with backend:", error);
+  }
+}
+
 export function LoginForm({
   className,
   ...props
@@ -32,6 +51,14 @@ export function LoginForm({
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const handleAuthAndSync = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      const idToken = await user.getIdToken();
+      await syncUserWithBackend(idToken);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -41,9 +68,25 @@ export function LoginForm({
       const email = emailRef.current?.value || "";
       const password = passwordRef.current?.value || "";
       await signInWithEmailAndPassword(auth, email, password);
+      await handleAuthAndSync();
       navigate("/dashboard");
     } catch (err: any) {
       setError("Failed to login. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOAuthLogin = async (provider: any, providerName: string) => {
+    setLoading(true);
+    setError("");
+    try {
+      await signInWithPopup(auth, provider);
+      await handleAuthAndSync();
+      navigate("/dashboard");
+    } catch (err: any) {
+      console.error(err);
+      setError(`${providerName} login failed.`);
     } finally {
       setLoading(false);
     }
@@ -65,20 +108,9 @@ export function LoginForm({
                 <Button
                   variant='outline'
                   className='w-full'
-                  onClick={async () => {
-                    try {
-                      setLoading(true);
-                      setError("");
-                      const provider = new GithubAuthProvider();
-                      await signInWithPopup(auth, provider);
-                      navigate("/dashboard");
-                    } catch (err: any) {
-                      console.error(err);
-                      setError("GitHub login failed.");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}>
+                  onClick={async () =>
+                    handleOAuthLogin(new GithubAuthProvider(), "GitHub")
+                  }>
                   <FaGithub className='mr-2 h-4 w-4' />
                   Login with GitHub
                 </Button>
@@ -86,18 +118,7 @@ export function LoginForm({
                   variant='outline'
                   className='w-full'
                   onClick={async () => {
-                    try {
-                      setLoading(true);
-                      setError("");
-                      const provider = new GoogleAuthProvider();
-                      await signInWithPopup(auth, provider);
-                      navigate("/dashboard");
-                    } catch (err: any) {
-                      console.error(err);
-                      setError("Google login failed.");
-                    } finally {
-                      setLoading(false);
-                    }
+                    handleOAuthLogin(new GoogleAuthProvider(), "Google");
                   }}>
                   <FaGoogle className='mr-2 h-4 w-4' />
                   Login with Google
