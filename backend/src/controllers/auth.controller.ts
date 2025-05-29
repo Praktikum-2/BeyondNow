@@ -8,6 +8,7 @@ export const syncFirebaseUser = async (
 ) => {
   console.log("=== SYNC USER ENDPOINT HIT ===");
   console.log("Headers:", req.headers);
+  console.log("Request body: ", req.body);
   console.log("Firebase User:", req.firebaseUser);
 
   if (!req.firebaseUser) {
@@ -17,8 +18,17 @@ export const syncFirebaseUser = async (
       .json({ message: "Unauthorized: No user data from token." });
   }
 
-  const { uid, email, name } = req.firebaseUser;
-  console.log("Extracted data:", { uid, email, name });
+  const { uid, email, name: firebaseName } = req.firebaseUser;
+  const { name: requestName } = req.body || {};
+  const finalName = requestName || firebaseName;
+
+  console.log("Extracted data:", {
+    uid,
+    email,
+    firebaseName,
+    requestName,
+    finalName,
+  });
 
   if (!uid) {
     console.log("❌ No UID in firebaseUser");
@@ -32,7 +42,7 @@ export const syncFirebaseUser = async (
     const dbUser = await userService.findOrCreateUserByFirebase(
       uid,
       email,
-      name
+      finalName
     );
     console.log("✅ User sync successful:", dbUser);
 

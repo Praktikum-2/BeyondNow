@@ -48,6 +48,7 @@ model Employee {
   ime                                                     String          @db.VarChar
   priimek                                                 String?         @db.VarChar
   department_id_fk                                        String?         @db.Uuid
+  email                                                   String?         @db.VarChar
   Department_Department_departmentLeader_id_fkToDeveloper Department[]    @relation("Department_departmentLeader_id_fkToDeveloper")
   Department_Employee_department_id_fkToDepartment        Department?     @relation("Employee_department_id_fkToDepartment", fields: [department_id_fk], references: [department_id], map: "Developer_department_id_fk_fkey")
   EmployeeSkill                                           EmployeeSkill[]
@@ -75,22 +76,22 @@ model Role {
 }
 
 model User {
-  uid           String        @id @db.VarChar(50) // Firebase UID
-  email         String        @unique @db.VarChar
-  name          String?       @db.VarChar
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  organization  Organization?
-  
+  uid          String        @id @db.VarChar(50)
+  email        String        @unique @db.VarChar
+  name         String?       @db.VarChar
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  organization Organization?
+
   @@map("users")
 }
 
 model Organization {
   organization_id String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name            String       @db.VarChar
-  user_uid        String       @unique @db.VarChar(50) 
-  user            User         @relation(fields: [user_uid], references: [uid])
+  user_uid        String       @unique @db.VarChar(50)
   departments     Department[]
-  
+  user            User         @relation(fields: [user_uid], references: [uid])
+
   @@map("organizations")
 }

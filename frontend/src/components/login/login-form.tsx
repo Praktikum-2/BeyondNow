@@ -23,16 +23,17 @@ import { Label } from "@/components/ui/label";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 
 async function syncUserWithBackend(idToken: string) {
-  console.log(idToken);
-  console.log("test");
   try {
-    const res = await fetch("http://localhost:3000/api/auth/sync", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL_LOCAL}/api/auth/sync`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!res.ok) {
       const errorData = await res.json();

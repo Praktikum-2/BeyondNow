@@ -1,11 +1,10 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { syncFirebaseUser } from "../controllers/auth.controller";
-import prisma from "../db"; // Make sure this path is correct
+import prisma from "../db";
 
 const router = express.Router();
 
-// Test database connection
 router.get("/test-db", async (req, res) => {
   try {
     console.log("🔄 Testing database connection...");
@@ -21,7 +20,6 @@ router.get("/test-db", async (req, res) => {
   }
 });
 
-// Sync Firebase user with database
 router.post("/auth/sync", authMiddleware, (req, res, next) => {
   Promise.resolve(syncFirebaseUser(req, res)).catch(next);
 });

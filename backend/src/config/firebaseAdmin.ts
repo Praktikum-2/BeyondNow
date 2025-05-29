@@ -1,6 +1,5 @@
 import admin from "firebase-admin";
 
-// Make sure this file exists and is properly configured
 if (!admin.apps.length) {
   try {
     admin.initializeApp({
