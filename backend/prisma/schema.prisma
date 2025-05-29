@@ -11,13 +11,13 @@ datasource db {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Department {
-  department_id                                          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                                                   String     @db.VarChar
-  departmentLeader_id_fk                                 String?    @db.Uuid
-  organization_id_fk                                     String     @db.Uuid
+  department_id                                          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                                                   String       @db.VarChar
+  departmentLeader_id_fk                                 String?      @db.Uuid
+  organization_id_fk                                     String       @db.Uuid
+  Developer_Department_departmentLeader_id_fkToDeveloper Employee?    @relation("Department_departmentLeader_id_fkToDeveloper", fields: [departmentLeader_id_fk], references: [employee_id])
   organization                                           Organization @relation(fields: [organization_id_fk], references: [organization_id])
-  Developer_Department_departmentLeader_id_fkToDeveloper Employee?  @relation("Department_departmentLeader_id_fkToDeveloper", fields: [departmentLeader_id_fk], references: [employee_id])
-  Employee_Employee_department_id_fkToDepartment         Employee[] @relation("Employee_department_id_fkToDepartment")
+  Employee_Employee_department_id_fkToDepartment         Employee[]   @relation("Employee_department_id_fkToDepartment")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -28,6 +28,8 @@ model Project {
   start_date        DateTime? @db.Timestamp(6)
   end_date          DateTime? @db.Timestamp(6)
   projectManager_id String?   @db.Uuid
+  description       String?   @db.VarChar
+  status            String?   @db.VarChar
   Developer         Employee? @relation(fields: [projectManager_id], references: [employee_id])
   Role              Role[]
 }
@@ -73,19 +75,22 @@ model Role {
 }
 
 model User {
-  uid           String       @id @db.VarChar(50) // Firebase UID
-  email         String       @unique @db.VarChar
+  uid           String        @id @db.VarChar(50) // Firebase UID
+  email         String        @unique @db.VarChar
+  name          String?       @db.VarChar
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   organization  Organization?
-
+  
   @@map("users")
 }
 
 model Organization {
   organization_id String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name            String       @db.VarChar
-  user_uid        String       @unique @db.Uuid
+  user_uid        String       @unique @db.VarChar(50) 
   user            User         @relation(fields: [user_uid], references: [uid])
   departments     Department[]
-
+  
   @@map("organizations")
 }

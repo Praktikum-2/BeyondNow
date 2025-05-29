@@ -1,30 +1,29 @@
 import express from "express";
-import {
-  authMiddleware,
-  requireRole,
-  requireVerifiedEmail,
-} from "../middlewares/auth.middleware";
+import { authMiddleware } from "../middlewares/auth.middleware";
 import { syncFirebaseUser } from "../controllers/auth.controller";
-
-// Extend Express Request interface to include firebaseUser
-declare global {
-  namespace Express {
-    interface Request {
-      firebaseUser?: { uid: string; email: string };
-    }
-  }
-}
+import prisma from "../db"; // Make sure this path is correct
 
 const router = express.Router();
-const authRoutes = () => {
-  router.post("/auth/sync", authMiddleware, async (req, res) => {
-    const { uid, email } = req.user!;
-    if (!uid || !email) {
-      res.status(400).json({ error: "User UID or email is missing." });
-      return;
-    }
-    req.firebaseUser = { uid, email };
-    await syncFirebaseUser(req, res);
-  });
-};
-export default authRoutes;
+
+// Test database connection
+router.get("/test-db", async (req, res) => {
+  try {
+    console.log("🔄 Testing database connection...");
+    const result = await prisma.$queryRaw`SELECT 1 as test`;
+    console.log("✅ Database connection successful:", result);
+    res.json({ message: "Database connection successful", result });
+  } catch (error: any) {
+    console.error("❌ Database connection failed:", error);
+    res.status(500).json({
+      message: "Database connection failed",
+      error: error.message,
+    });
+  }
+});
+
+// Sync Firebase user with database
+router.post("/auth/sync", authMiddleware, (req, res, next) => {
+  Promise.resolve(syncFirebaseUser(req, res)).catch(next);
+});
+
+export default router;
