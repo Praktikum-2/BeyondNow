@@ -26,9 +26,10 @@ const FirstLogin: React.FC = () => {
 
       // Pridobi ID token
       const token = await user.getIdToken();
+      const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
 
       // Pošlji zahtevek na backend
-      const response = await fetch("http://localhost:3000/api/organization", {
+      const response = await fetch(`${apiUrl}/api/organization`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
