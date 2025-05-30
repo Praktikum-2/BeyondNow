@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import { getAuth } from "firebase/auth";
 import {
-  Menu,
-  Bell,
-  Search,
-  X,
-  Calendar,
-  Users,
-  Briefcase,
   BarChart3,
+  Bell,
+  Briefcase,
+  Calendar,
   FileText,
   LayoutDashboard,
+  Menu,
+  Search,
+  Users,
+  X,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 interface HeaderProps {
   title: string;
@@ -20,6 +21,38 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [organizationName, setOrganizationName] = useState("Organization"); // default placeholder
+
+  useEffect(() => {
+    const fetchOrganization = async () => {
+      try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const token = await user.getIdToken();
+
+        const res = await fetch(`${import.meta.env.VITE_API_URL_LOCAL}/api/organization/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setOrganizationName(data.data.name); // assuming { name: "My Org" }
+        } else {
+          console.error("Could not fetch organization name");
+        }
+      } catch (err) {
+        console.error("Error fetching organization", err);
+      }
+    };
+
+    fetchOrganization();
+  }, []);
+
 
   return (
     <header className='sticky top-0 z-30 bg-white border-b border-gray-200'>
@@ -34,7 +67,7 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
           <nav className='text-sm text-gray-500'>
             <ol className='flex items-center space-x-1 sm:space-x-2'>
               <li>
-                <span className='text-gray-600 font-medium'>Department</span>
+                <span className='text-gray-600 font-medium'>{organizationName}</span>
               </li>
               <li>
                 <span className='text-gray-400'>›</span>

@@ -11,3 +11,11 @@ export const createOrganization = async (
     },
   });
 };
+
+export const getOrganizationByUserUid = async (userUid: string) => {
+  return prisma.organization.findFirst({
+    where: {
+      user_uid: userUid,
+    },
+  });
+};
