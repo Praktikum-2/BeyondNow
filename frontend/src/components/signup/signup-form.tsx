@@ -1,15 +1,14 @@
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { auth } from "@/firebase";
 import {
   createUserWithEmailAndPassword,
+  GithubAuthProvider,
   GoogleAuthProvider,
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { GithubAuthProvider } from "firebase/auth";
-import { auth } from "@/firebase";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import {
   Card,
@@ -20,8 +19,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
-import { FaGoogle, FaGithub } from "react-icons/fa";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 // Updated syncUserWithBackend to accept optional name parameter
 async function syncUserWithBackend(idToken: string, name?: string) {
@@ -124,7 +124,7 @@ export function SignupForm({
       // Sync with backend, passing the full name
       await handleAuthAndSync(fullName);
 
-      navigate("/dashboard");
+      navigate("/startup");
     } catch (err: any) {
       console.error("Firebase Signup Error:", err);
       let message = "Failed to sign up. Please try again.";
@@ -159,7 +159,7 @@ export function SignupForm({
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
       // For Google signup, use the displayName from Google profile
       await handleAuthAndSync(result.user.displayName || undefined);
-      navigate("/dashboard");
+      navigate("/startup");
     } catch (err: any) {
       console.error(err);
       if (err.code === "auth/account-exists-with-different-credential") {
@@ -183,7 +183,7 @@ export function SignupForm({
       const result = await signInWithPopup(auth, new GithubAuthProvider());
       // For GitHub signup, use the displayName from GitHub profile
       await handleAuthAndSync(result.user.displayName || undefined);
-      navigate("/dashboard");
+      navigate("/startup");
     } catch (err: any) {
       console.error(err);
       if (err.code === "auth/account-exists-with-different-credential") {
