@@ -40,7 +40,7 @@ export const authMiddleware = async (
       return;
     }
 
-    // console.log("🔄 Verifying Firebase token...");
+    // console.log("Verifying Firebase token...");
     const decodedToken = await admin.auth().verifyIdToken(token);
     // console.log("Token verified. Decoded:", {
     //   uid: decodedToken.uid,

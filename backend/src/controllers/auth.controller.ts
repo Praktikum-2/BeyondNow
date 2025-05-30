@@ -5,61 +5,61 @@ import * as userService from "../services/user.service";
 export const syncFirebaseUser = async (
   req: AuthenticatedRequest,
   res: Response
-) => {
-  // console.log("=== SYNC USER ENDPOINT HIT ===");
-  // console.log("Headers:", req.headers);
-  // console.log("Request body: ", req.body);
-  // console.log("Firebase User:", req.firebaseUser);
-
-  if (!req.firebaseUser) {
-    console.log("No firebaseUser in request");
-    return res
-      .status(401)
-      .json({ message: "Unauthorized: No user data from token." });
-  }
-
-  const { uid, email, name: firebaseName } = req.firebaseUser;
-  const { name: requestName } = req.body || {};
-  const finalName = requestName || firebaseName;
-
-  // console.log("Extracted data:", {
-  //   uid,
-  //   email,
-  //   firebaseName,
-  //   requestName,
-  //   finalName,
-  // });
-
-  if (!uid) {
-    console.log("No UID in firebaseUser");
-    return res
-      .status(400)
-      .json({ message: "Bad Request: UID missing from token." });
-  }
-
+): Promise<Response> => {
   try {
-    // console.log("Calling userService.findOrCreateUserByFirebase...");
+    if (!req.firebaseUser) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: No user data from token.",
+      });
+    }
+
+    const { uid, email, name: firebaseName } = req.firebaseUser;
+    const { name: requestName } = req.body || {};
+
+    if (!uid) {
+      return res.status(400).json({
+        success: false,
+        message: "Bad Request: UID missing from token.",
+      });
+    }
+
+    const finalName = requestName || firebaseName;
+
     const dbUser = await userService.findOrCreateUserByFirebase(
       uid,
       email,
       finalName
     );
-    // console.log("User sync successful:", dbUser);
 
-    return res
-      .status(200)
-      .json({ message: "User synchronized successfully", user: dbUser });
+    return res.status(200).json({
+      success: true,
+      message: "User synchronized successfully",
+      data: {
+        user: dbUser,
+      },
+    });
   } catch (error: any) {
     console.error("Error syncing Firebase user:", error);
-    console.error("Error stack:", error.stack);
 
     if (error.message.includes("Email is required")) {
-      return res.status(400).json({ message: error.message });
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    if (error.message.includes("account with this email already exists")) {
+      return res.status(409).json({
+        success: false,
+        message: error.message,
+      });
     }
 
     return res.status(500).json({
+      success: false,
       message: "Internal Server Error: Could not sync user.",
-      error: error.message,
+      ...(process.env.NODE_ENV === "development" && { error: error.message }),
     });
   }
 };
