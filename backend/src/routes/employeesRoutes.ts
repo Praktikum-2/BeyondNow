@@ -7,7 +7,7 @@ import {
 const employeeRoutes = Router();
 
 // kreiranje projekta
-employeeRoutes.post("/createNew", createEmployee);
+employeeRoutes.post("/create", createEmployee);
 
 // pridovivanje zaposlenih
 employeeRoutes.get("/getAll", getEmployees);

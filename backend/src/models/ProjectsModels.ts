@@ -1,4 +1,4 @@
-import { prisma } from "../db";
+import prisma from "../db";
 
 // Pridobi vse projekte
 export const getAllProjects = async () => {

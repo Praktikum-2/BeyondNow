@@ -102,7 +102,7 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/projects/createNew", {
+      const response = await fetch("http://localhost:3000/projects/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

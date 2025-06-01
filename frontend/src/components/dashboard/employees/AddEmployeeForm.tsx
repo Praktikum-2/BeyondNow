@@ -1,13 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { ChooseSkills } from "./ChooseSkills";
+import type { Department } from "@/types/types";
 
 interface AddEmployeeFormProps {
   onSubmit: (formData: any) => void;
   onCancel: () => void;
+  departments?: Department[]; // Add this line
 }
 
 interface SkillOption {
+  label: string;
+  value: string;
+}
+
+interface DepartmentOption {
   label: string;
   value: string;
 }
@@ -27,6 +34,21 @@ const fetchSkills = async (): Promise<SkillOption[]> => {
   }
 };
 
+const fetchDepartments = async (): Promise<DepartmentOption[]> => {
+  try {
+    const res = await fetch("http://localhost:3000/departments/getAll");
+    if (!res.ok) throw new Error("Napaka pri pridobivanju oddelkov");
+    const data = await res.json();
+    return data.map((dept: any) => ({
+      label: dept.name,
+      value: dept.department_id,
+    }));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
 const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
   onSubmit,
   onCancel,
@@ -39,11 +61,15 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
     skills: [] as string[], // direktno v formData
   });
   const [skillOptions, setSkillOptions] = useState<SkillOption[]>([]);
+  const [departmentOptions, setDepartmentOptions] = useState<
+    DepartmentOption[]
+  >([]);
   const modalRef = useRef<HTMLDivElement>(null);
   const skillsPopoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchSkills().then(setSkillOptions);
+    fetchDepartments().then(setDepartmentOptions);
   }, []);
 
   useEffect(() => {
@@ -81,21 +107,18 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
     e.preventDefault();
     console.log(formData);
     try {
-      const response = await fetch(
-        "http://localhost:3000/employees/createNew",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch("http://localhost:3000/employees/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
       if (!response.ok) throw new Error("ustvarjanje zaposlenega ni uspelo");
 
       const status = await response.json();
       console.log(status);
-      onSubmit(status);
+      onSubmit(status.data);
       onCancel();
     } catch (error) {
       console.error(error);
@@ -181,13 +204,11 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
                 value={formData.department_id_fk}
                 onChange={handleChange}>
                 <option value=''>Izberi oddelek</option>
-                <option value='28dd61fe-35a0-46da-9c30-670b11492595'>
-                  Engineering
-                </option>
-                <option value='Design'>Design</option>
-                <option value='Management'>Management</option>
-                <option value='Marketing'>Marketing</option>
-                <option value='Sales'>Sales</option>
+                {departmentOptions.map((dept) => (
+                  <option key={dept.value} value={dept.value}>
+                    {dept.label}
+                  </option>
+                ))}
               </select>
             </div>
 
