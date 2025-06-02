@@ -6,7 +6,7 @@ import type { Department } from "@/types/types";
 interface AddEmployeeFormProps {
   onSubmit: (formData: any) => void;
   onCancel: () => void;
-  departments?: Department[]; // Add this line
+  departments?: Department[];
 }
 
 interface SkillOption {
@@ -58,7 +58,7 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
     priimek: "",
     email: "",
     department_id_fk: "",
-    skills: [] as string[], // direktno v formData
+    skills: [] as string[],
   });
   const [skillOptions, setSkillOptions] = useState<SkillOption[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<
@@ -105,24 +105,11 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
-    try {
-      const response = await fetch("http://localhost:3000/employees/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) throw new Error("ustvarjanje zaposlenega ni uspelo");
+    console.log("Form data being submitted:", formData);
 
-      const status = await response.json();
-      console.log(status);
-      onSubmit(status.data);
-      onCancel();
-    } catch (error) {
-      console.error(error);
-    }
+    // Just pass the form data to the parent component
+    // Let the parent handle the API call
+    onSubmit(formData);
   };
 
   return (
