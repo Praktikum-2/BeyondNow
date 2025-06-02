@@ -1,23 +1,101 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Search, Filter, Download } from "lucide-react";
-import type { Employee } from "@/types/types";
-import { employees as initialEmployees } from "@/data/mockData";
+import type { Employee, Department, DbEmployee } from "@/types/types";
 import AddEmployeeForm from "@/components/dashboard/employees/AddEmployeeForm";
 
+const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
+
 const Employees: React.FC = () => {
-  const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedRole, setSelectedRole] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [employeesLoading, setEmployeesLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const departments = [...new Set(employees.map((emp) => emp.department))];
+  const transformEmployee = (dbEmp: DbEmployee): Employee => ({
+    id: dbEmp.employee_id,
+    name: `${dbEmp.ime}${dbEmp.priimek ? ` ${dbEmp.priimek}` : ""}`,
+    email: dbEmp.email || "",
+    role:
+      dbEmp.Role.length > 0
+        ? dbEmp.Role[0].employeeRole || "No Role"
+        : "No Role",
+    department:
+      dbEmp.Department_Employee_department_id_fkToDepartment?.name ||
+      "No Department",
+    imageUrl: "/default.jpg",
+    skills: dbEmp.EmployeeSkill.map((es) => es.Skills?.skill).filter(
+      (skill): skill is string => skill !== null && skill !== undefined
+    ),
+    availability: Array.from({ length: 30 }, (_, i) => ({
+      date: new Date(Date.now() + i * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      available: 100,
+      projects: [],
+    })),
+  });
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${apiUrl}/departments/getAll`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const departmentsData: Department[] = await response.json();
+        setDepartments(departmentsData);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Error fetching departments"
+        );
+        console.error("Error fetching departments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      setEmployeesLoading(true);
+      const response = await fetch(`${apiUrl}/employees/getAll`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const dbEmployees: DbEmployee[] = await response.json();
+      const transformedEmployees = dbEmployees.map(transformEmployee);
+      setEmployees(transformedEmployees);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error fetching employees");
+      console.error("Error fetching employees:", err);
+    } finally {
+      setEmployeesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
   const roles = [...new Set(employees.map((emp) => emp.role))];
 
   const filteredEmployees = employees.filter((employee) => {
     const matchesSearch =
-      employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee.email.toLowerCase().includes(searchQuery.toLowerCase());
+      employee.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      false;
     const matchesDepartment =
       selectedDepartment === "all" ||
       employee.department === selectedDepartment;
@@ -27,20 +105,26 @@ const Employees: React.FC = () => {
     return matchesSearch && matchesDepartment && matchesRole;
   });
 
-  const handleAddEmployee = (formData: any) => {
-    const newEmployee: Employee = {
-      ...formData,
-      availability: Array.from({ length: 30 }, (_, i) => ({
-        date: new Date(Date.now() + i * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0],
-        available: 100,
-        projects: [],
-      })),
-    };
+  const handleAddEmployee = async (formData: any) => {
+    try {
+      const response = await fetch(`${apiUrl}/employees/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    setEmployees([...employees, newEmployee]);
-    setShowAddForm(false);
+      if (!response.ok) {
+        throw new Error(`Failed to create employee: ${response.statusText}`);
+      }
+
+      await fetchEmployees();
+      setShowAddForm(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error adding employee");
+      console.error("Error adding employee:", err);
+    }
   };
 
   return (
@@ -66,6 +150,13 @@ const Employees: React.FC = () => {
         </div>
       </div>
 
+      {/* Error message */}
+      {error && (
+        <div className='bg-red-50 border border-red-200 rounded-md p-4'>
+          <div className='text-sm text-red-700'>Error: {error}</div>
+        </div>
+      )}
+
       {/* Search and filters */}
       <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-4'>
         <div className='flex flex-col sm:flex-row gap-4'>
@@ -87,11 +178,14 @@ const Employees: React.FC = () => {
             <select
               className='block w-40 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
               value={selectedDepartment}
-              onChange={(e) => setSelectedDepartment(e.target.value)}>
-              <option value='all'>Vsi oddelki</option>
+              onChange={(e) => setSelectedDepartment(e.target.value)}
+              disabled={loading}>
+              <option value='all'>
+                {loading ? "Nalaganje..." : "Vsi oddelki"}
+              </option>
               {departments.map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
+                <option key={dept.department_id} value={dept.name}>
+                  {dept.name}
                 </option>
               ))}
             </select>
@@ -114,102 +208,126 @@ const Employees: React.FC = () => {
         </div>
       </div>
 
+      {/* Loading state */}
+      {employeesLoading && (
+        <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center'>
+          <div className='text-sm text-gray-500'>Nalaganje zaposlenih...</div>
+        </div>
+      )}
+
       {/* Employees table */}
-      <div className='bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden'>
-        <table className='min-w-full divide-y divide-gray-200'>
-          <thead className='bg-gray-50'>
-            <tr>
-              <th
-                scope='col'
-                className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Zaposleni
-              </th>
-              <th
-                scope='col'
-                className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Vloga
-              </th>
-              <th
-                scope='col'
-                className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Oddelek
-              </th>
-              <th
-                scope='col'
-                className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Veščine
-              </th>
-              <th
-                scope='col'
-                className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Status
-              </th>
-              <th scope='col' className='relative px-6 py-3'>
-                <span className='sr-only'>Uredi</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className='bg-white divide-y divide-gray-200'>
-            {filteredEmployees.map((employee) => (
-              <tr key={employee.id} className='hover:bg-gray-50'>
-                <td className='px-6 py-4 whitespace-nowrap'>
-                  <div className='flex items-center'>
-                    <div className='flex-shrink-0 h-10 w-10'>
-                      <img
-                        className='h-10 w-10 rounded-full'
-                        src={employee.imageUrl}
-                        alt=''
-                      />
-                    </div>
-                    <div className='ml-4'>
-                      <div className='text-sm font-medium text-gray-900'>
-                        {employee.name}
-                      </div>
-                      <div className='text-sm text-gray-500'>
-                        {employee.email}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td className='px-6 py-4 whitespace-nowrap'>
-                  <div className='text-sm text-gray-900'>{employee.role}</div>
-                </td>
-                <td className='px-6 py-4 whitespace-nowrap'>
-                  <div className='text-sm text-gray-900'>
-                    {employee.department}
-                  </div>
-                </td>
-                <td className='px-6 py-4'>
-                  <div className='flex flex-wrap gap-1'>
-                    {employee.skills.map((skill, index) => (
-                      <span
-                        key={index}
-                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </td>
-                <td className='px-6 py-4 whitespace-nowrap'>
-                  <span className='px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
-                    Aktiven
-                  </span>
-                </td>
-                <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
-                  <button className='text-blue-600 hover:text-blue-900'>
-                    Uredi
-                  </button>
-                </td>
+      {!employeesLoading && (
+        <div className='bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden'>
+          <table className='min-w-full divide-y divide-gray-200'>
+            <thead className='bg-gray-50'>
+              <tr>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Zaposleni
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Vloga
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Oddelek
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Veščine
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Status
+                </th>
+                <th className='relative px-6 py-3'>
+                  <span className='sr-only'>Uredi</span>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className='bg-white divide-y divide-gray-200'>
+              {filteredEmployees.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className='px-6 py-4 text-center text-sm text-gray-500'>
+                    {employees.length === 0
+                      ? "Ni zaposlenih"
+                      : "Ni ujemajočih se zaposlenih"}
+                  </td>
+                </tr>
+              ) : (
+                filteredEmployees.map((employee) => (
+                  <tr key={employee.id} className='hover:bg-gray-50'>
+                    <td className='px-6 py-4 whitespace-nowrap'>
+                      <div className='flex items-center'>
+                        <div className='flex-shrink-0 h-10 w-10'>
+                          <img
+                            className='h-10 w-10 rounded-full'
+                            src={employee.imageUrl}
+                            alt=''
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src =
+                                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f3f4f6'/%3E%3Ctext x='20' y='25' text-anchor='middle' fill='%236b7280' font-size='12'%3E👤%3C/text%3E%3C/svg%3E";
+                            }}
+                          />
+                        </div>
+                        <div className='ml-4'>
+                          <div className='text-sm font-medium text-gray-900'>
+                            {employee.name}
+                          </div>
+                          <div className='text-sm text-gray-500'>
+                            {employee.email}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4 whitespace-nowrap'>
+                      <div className='text-sm text-gray-900'>
+                        {employee.role}
+                      </div>
+                    </td>
+                    <td className='px-6 py-4 whitespace-nowrap'>
+                      <div className='text-sm text-gray-900'>
+                        {employee.department}
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>
+                      <div className='flex flex-wrap gap-1'>
+                        {employee.skills?.length > 0 ? (
+                          employee.skills.map((skill, index) => (
+                            <span
+                              key={index}
+                              className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
+                              {skill}
+                            </span>
+                          ))
+                        ) : (
+                          <span className='text-sm text-gray-400'>
+                            Ni veščin
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className='px-6 py-4 whitespace-nowrap'>
+                      <span className='px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
+                        Aktiven
+                      </span>
+                    </td>
+                    <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
+                      <button className='text-blue-600 hover:text-blue-900'>
+                        Uredi
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {showAddForm && (
         <AddEmployeeForm
           onSubmit={handleAddEmployee}
           onCancel={() => setShowAddForm(false)}
+          departments={departments}
         />
       )}
     </div>

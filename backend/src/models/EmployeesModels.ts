@@ -1,17 +1,28 @@
-import { prisma } from "../db";
+import prisma from "../db";
+
 export const getAllEmployees = async () => {
-  return await prisma.employee.findMany();
+  return await prisma.employee.findMany({
+    include: {
+      Department_Employee_department_id_fkToDepartment: true,
+      EmployeeSkill: {
+        include: {
+          Skills: true,
+        },
+      },
+      Role: true,
+    },
+  });
 };
 
-export const createNewEmployee = async (Rawdata: {
+export const createNewEmployee = async (rawData: {
   ime: string;
   priimek: string;
   email: string;
   department_id_fk: string;
-  skills: string[]; // array of skill_id (UUID strings)
+  skills: string[];
 }) => {
-  console.log("zacenjam ustvarjanje zaposlenega");
-  const { ime, priimek, email, department_id_fk, skills } = Rawdata;
+  // console.log("Starting employee creation");
+  const { ime, priimek, email, department_id_fk, skills } = rawData;
 
   const data = {
     ime,
@@ -25,14 +36,20 @@ export const createNewEmployee = async (Rawdata: {
     },
   };
 
-  console.log("Ustvarjam zaposlenega:", ime, priimek);
+  // console.log("Creating employee:", ime, priimek);
 
-  const rezultatKreiranja = await prisma.employee.create({
+  const result = await prisma.employee.create({
     data,
     include: {
-      EmployeeSkill: true,
+      EmployeeSkill: {
+        include: {
+          Skills: true,
+        },
+      },
+      Department_Employee_department_id_fkToDepartment: true,
+      Role: true,
     },
   });
 
-  return "zaposleni je ustvarjen: " + rezultatKreiranja;
+  return result;
 };

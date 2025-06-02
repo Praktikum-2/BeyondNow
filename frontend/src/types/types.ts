@@ -1,14 +1,3 @@
-export interface Employee {
-  id: string;
-  name: string;
-  role: string;
-  skills: string[];
-  imageUrl: string;
-  department: string;
-  email: string;
-  availability: AvailabilityRecord[];
-}
-
 export interface Project {
   id: string;
   name: string;
@@ -109,4 +98,42 @@ export interface Metric {
   change?: number;
   status?: "positive" | "negative" | "neutral";
   info?: string;
+}
+
+// Database Employee interface (from your database)
+export interface DbEmployee {
+  employee_id: string;
+  ime: string;
+  priimek: string | null;
+  email: string | null;
+  department_id_fk: string | null;
+  Department_Employee_department_id_fkToDepartment?: {
+    name: string;
+    department_id: string;
+  } | null;
+  EmployeeSkill: {
+    Skills: {
+      skill: string;
+    } | null;
+  }[];
+  Role: {
+    employeeRole: string | null;
+  }[];
+}
+
+// Frontend Employee interface (for your React component)
+export interface Employee {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  department: string;
+  imageUrl: string;
+  skills: string[];
+  availability: AvailabilityRecord[];
+}
+
+export interface Department {
+  department_id: string;
+  name: string;
 }

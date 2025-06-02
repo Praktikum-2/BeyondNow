@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { ChooseManager } from "@/components/dashboard/projects/ChooseManager";
 
+const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
+
 interface AddProjectFormProps {
   onSubmit: (formData: any) => void;
   onCancel: () => void;
@@ -25,7 +27,6 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     status: "planned",
   });
 
-  // Stanje za seznam managerjev (options)
   const [managerOptionsList, setManagerOptionsList] = useState<ManagerOption[]>(
     []
   );
@@ -33,11 +34,10 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const managerPopoverRef = useRef<HTMLDivElement>(null);
 
-  // Fetch managerjev ob mountu komponente
   useEffect(() => {
     const fetchManagers = async () => {
       try {
-        const response = await fetch("http://localhost:3000/employees/getAll");
+        const response = await fetch(`${apiUrl}/employees/getAll`);
         if (!response.ok) throw new Error("Napaka pri pridobivanju zaposlenih");
         const employees = await response.json();
 
@@ -56,7 +56,6 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     fetchManagers();
   }, []);
 
-  // Zapiranje modala ob kliku zunaj
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node;
@@ -76,7 +75,6 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     };
   }, [onCancel]);
 
-  // Spreminjanje polj v formi (input, textarea, select)
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -89,7 +87,6 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     }));
   };
 
-  // Spreminjanje managerja (iz ChooseManager)
   const handleManagerChange = (newValue: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -97,12 +94,11 @@ const AddProjectForm: React.FC<AddProjectFormProps> = ({
     }));
   };
 
-  // Submit forma
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/projects/createNew", {
+      const response = await fetch(`${apiUrl}/projects/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
