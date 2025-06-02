@@ -77,10 +77,8 @@ export const ChooseSkills: React.FC<ChooseSkillsProps> = ({
                     value={option.value}
                     onSelect={() => {
                       toggleSkill(option.value);
-                      // Ne zapiramo Popoverja
                     }}
-                    onMouseDown={(e) => e.preventDefault()} // 🔒 prepreči zaprtje zunanjega Popoverja
-                  >
+                    onMouseDown={(e) => e.preventDefault()}>
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",

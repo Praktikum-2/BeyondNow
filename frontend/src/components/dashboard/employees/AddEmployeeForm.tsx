@@ -3,6 +3,8 @@ import { X } from "lucide-react";
 import { ChooseSkills } from "./ChooseSkills";
 import type { Department } from "@/types/types";
 
+const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
+
 interface AddEmployeeFormProps {
   onSubmit: (formData: any) => void;
   onCancel: () => void;
@@ -21,7 +23,7 @@ interface DepartmentOption {
 
 const fetchSkills = async (): Promise<SkillOption[]> => {
   try {
-    const res = await fetch("http://localhost:3000/skills/getAll");
+    const res = await fetch(`${apiUrl}/skills/getAll`);
     if (!res.ok) throw new Error("Napaka pri pridobivanju skillov");
     const data = await res.json();
     return data.map((skill: any) => ({
@@ -36,7 +38,7 @@ const fetchSkills = async (): Promise<SkillOption[]> => {
 
 const fetchDepartments = async (): Promise<DepartmentOption[]> => {
   try {
-    const res = await fetch("http://localhost:3000/departments/getAll");
+    const res = await fetch(`${apiUrl}/departments/getAll`);
     if (!res.ok) throw new Error("Napaka pri pridobivanju oddelkov");
     const data = await res.json();
     return data.map((dept: any) => ({
@@ -105,7 +107,7 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form data being submitted:", formData);
+    // console.log("Form data being submitted:", formData);
 
     // Just pass the form data to the parent component
     // Let the parent handle the API call

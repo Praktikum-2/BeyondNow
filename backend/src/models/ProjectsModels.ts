@@ -19,7 +19,7 @@ export const createNewProject = async (Rawdata: {
     start_date: new Date(Rawdata.start_date),
     end_date: new Date(Rawdata.end_date),
   };
-  console.log(data);
+  // console.log(data);
   return await prisma.project.create({
     data,
   });

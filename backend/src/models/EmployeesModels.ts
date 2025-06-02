@@ -19,9 +19,9 @@ export const createNewEmployee = async (rawData: {
   priimek: string;
   email: string;
   department_id_fk: string;
-  skills: string[]; // array of skill_id (UUID strings)
+  skills: string[];
 }) => {
-  console.log("Starting employee creation");
+  // console.log("Starting employee creation");
   const { ime, priimek, email, department_id_fk, skills } = rawData;
 
   const data = {
@@ -36,7 +36,7 @@ export const createNewEmployee = async (rawData: {
     },
   };
 
-  console.log("Creating employee:", ime, priimek);
+  // console.log("Creating employee:", ime, priimek);
 
   const result = await prisma.employee.create({
     data,

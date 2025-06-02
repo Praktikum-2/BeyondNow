@@ -3,6 +3,8 @@ import { Plus, Search, Filter, Download } from "lucide-react";
 import type { Employee, Department, DbEmployee } from "@/types/types";
 import AddEmployeeForm from "@/components/dashboard/employees/AddEmployeeForm";
 
+const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
+
 const Employees: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
@@ -14,7 +16,6 @@ const Employees: React.FC = () => {
   const [employeesLoading, setEmployeesLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Transform database employee to frontend employee format
   const transformEmployee = (dbEmp: DbEmployee): Employee => ({
     id: dbEmp.employee_id,
     name: `${dbEmp.ime}${dbEmp.priimek ? ` ${dbEmp.priimek}` : ""}`,
@@ -26,7 +27,7 @@ const Employees: React.FC = () => {
     department:
       dbEmp.Department_Employee_department_id_fkToDepartment?.name ||
       "No Department",
-    imageUrl: "/default.jpg", // Fixed path
+    imageUrl: "/default.jpg",
     skills: dbEmp.EmployeeSkill.map((es) => es.Skills?.skill).filter(
       (skill): skill is string => skill !== null && skill !== undefined
     ),
@@ -39,14 +40,11 @@ const Employees: React.FC = () => {
     })),
   });
 
-  // Fetch departments
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "http://localhost:3000/departments/getAll"
-        );
+        const response = await fetch(`${apiUrl}/departments/getAll`);
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -67,11 +65,10 @@ const Employees: React.FC = () => {
     fetchDepartments();
   }, []);
 
-  // Fetch employees from database
   const fetchEmployees = async () => {
     try {
       setEmployeesLoading(true);
-      const response = await fetch("http://localhost:3000/employees/getAll");
+      const response = await fetch(`${apiUrl}/employees/getAll`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -94,7 +91,6 @@ const Employees: React.FC = () => {
 
   const roles = [...new Set(employees.map((emp) => emp.role))];
 
-  // Filtered employees
   const filteredEmployees = employees.filter((employee) => {
     const matchesSearch =
       employee.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -109,10 +105,9 @@ const Employees: React.FC = () => {
     return matchesSearch && matchesDepartment && matchesRole;
   });
 
-  // Handle adding new employee
   const handleAddEmployee = async (formData: any) => {
     try {
-      const response = await fetch("http://localhost:3000/employees/create", {
+      const response = await fetch(`${apiUrl}/employees/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -124,7 +119,6 @@ const Employees: React.FC = () => {
         throw new Error(`Failed to create employee: ${response.statusText}`);
       }
 
-      // Refresh the employees list
       await fetchEmployees();
       setShowAddForm(false);
     } catch (err) {
