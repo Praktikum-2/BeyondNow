@@ -56,20 +56,20 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
   const mainNavItems = [
     {
-      id: "dashboard",
-      label: "Nadzorna plošča",
+      id: "",
+      label: "Home",
       icon: <LayoutDashboard size={18} />,
     },
-    { id: "timeline", label: "Časovnica", icon: <Calendar size={18} /> },
-    { id: "employees", label: "Zaposleni", icon: <Users size={18} /> },
-    { id: "projects", label: "Projekti", icon: <Briefcase size={18} /> },
-    { id: "reports", label: "Poročila", icon: <BarChart3 size={18} /> },
-    { id: "requests", label: "Zahteve", icon: <FileText size={18} /> },
+    { id: "timeline", label: "Timeline", icon: <Calendar size={18} /> },
+    { id: "employees", label: "Employees", icon: <Users size={18} /> },
+    { id: "projects", label: "Projects", icon: <Briefcase size={18} /> },
+    { id: "reports", label: "Reports", icon: <BarChart3 size={18} /> },
+    { id: "requests", label: "Requests", icon: <FileText size={18} /> },
   ];
 
   const otherNavItems = [
-    { id: "settings", label: "Nastavitve", icon: <Settings size={18} /> },
-    { id: "help", label: "Pomoč", icon: <HelpCircle size={18} /> },
+    { id: "settings", label: "Settings", icon: <Settings size={18} /> },
+    { id: "help", label: "Help", icon: <HelpCircle size={18} /> },
   ];
 
   return (
@@ -88,7 +88,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         }`}>
         <div className='flex items-center justify-between p-4 border-b border-gray-200'>
           <h1 className='text-lg font-semibold text-gray-900'>
-            Planiranje zaposlenih
+            Employee planning
           </h1>
           <button
             onClick={onClose}
@@ -138,7 +138,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         <div className='p-3 border-t border-gray-200'>
           <button className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 transition-colors'>
             <LogOut size={18} />
-            <span>Odjava</span>
+            <span>Logout</span>
           </button>
         </div>
       </div>
