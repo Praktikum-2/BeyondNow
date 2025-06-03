@@ -11,6 +11,9 @@ const Projects: React.FC = () => {
   const [teamMembersCounts, setTeamMembersCounts] = useState<
     Record<string, number>
   >({});
+  const [projectManagers, setProjectManagers] = useState<
+    Record<string, { firstName: string; lastName: string }>
+  >({});
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -33,18 +36,21 @@ const Projects: React.FC = () => {
 
   // Fetchamo teamMembers count za vsak projekt posebej
   useEffect(() => {
-    const fetchAllTeamMemberCounts = async () => {
+    const fetchData = async () => {
       const counts: Record<string, number> = {};
+      const managers: Record<string, { firstName: string; lastName: string }> =
+        {};
 
       await Promise.all(
         projects.map(async (project) => {
+          // Fetch team members count
           try {
-            const res = await fetch(
+            const resCount = await fetch(
               `${apiUrl}/projects/teamMembers/${project.project_id}`
             );
-            const data = await res.json();
-            // Ker je data že število, samo nastavi:
-            counts[project.project_id] = typeof data === "number" ? data : 0;
+            const dataCount = await resCount.json();
+            counts[project.project_id] =
+              typeof dataCount === "number" ? dataCount : 0;
           } catch (err) {
             console.error(
               `Napaka pri fetchanju članov za projekt ${project.project_id}:`,
@@ -52,21 +58,54 @@ const Projects: React.FC = () => {
             );
             counts[project.project_id] = 0;
           }
+
+          // Fetch project manager data
+          if (project.projectManager_id) {
+            try {
+              console.log(project.projectManager_id);
+              const resManager = await fetch(
+                `${apiUrl}/projects/projectManager/${project.projectManager_id}`
+              );
+              if (!resManager.ok) throw new Error("Manager not found");
+              const managerData = await resManager.json();
+              console.log(managerData.ime, managerData.priimek);
+              managers[project.project_id] = {
+                firstName: managerData.ime || "",
+                lastName: managerData.priimek || "",
+              };
+            } catch (err) {
+              console.error(
+                `Napaka pri fetchanju managerja za projekt ${project.project_id}:`,
+                err
+              );
+              managers[project.project_id] = {
+                firstName: "Not determined",
+                lastName: "",
+              };
+            }
+          } else {
+            // Ni managerja
+            managers[project.project_id] = {
+              firstName: "Not determined",
+              lastName: "",
+            };
+          }
         })
       );
 
       setTeamMembersCounts(counts);
+      setProjectManagers(managers);
     };
 
     if (projects.length > 0) {
-      fetchAllTeamMemberCounts();
+      fetchData();
     }
   }, [projects]);
 
   const filteredProjects = projects.filter((project) => {
-    const matchesSearch =
-      project.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.client?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = project.name
+      ?.toLowerCase()
+      .includes(searchQuery.toLowerCase());
     const matchesStatus =
       selectedStatus === "all" || project.status === selectedStatus;
     return matchesSearch && matchesStatus;
@@ -204,7 +243,13 @@ const Projects: React.FC = () => {
                 </div>
                 <div className='flex items-center text-sm text-gray-500'>
                   <FaUserTie size={16} className='mr-2' />
-                  <span>Project Manager</span>
+                  <span>
+                    {projectManagers[project.project_id]
+                      ? `${projectManagers[project.project_id].firstName} ${
+                          projectManagers[project.project_id].lastName
+                        }`
+                      : "Loading..."}
+                  </span>
                 </div>
                 <div className='flex items-center text-sm text-gray-500'>
                   <Users size={16} className='mr-2' />

@@ -1,13 +1,11 @@
 export interface Project {
   project_id: string;
   name: string;
-  client: string;
   start_date: string;
   end_date: string;
-  status: "planned" | "active" | "completed" | "on-hold";
+  projectManager_id: string;
   description: string;
-  teamMembers: number;
-  requiredRoles: ResourceRequest[];
+  status: "planned" | "active" | "completed" | "on-hold";
 }
 
 export interface AssignedEmployee {
