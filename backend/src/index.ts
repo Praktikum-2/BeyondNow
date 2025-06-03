@@ -1,18 +1,28 @@
+import cors from "cors";
 import "dotenv/config";
 import express from "express";
-import cors from "cors";
-import { prisma } from "./db";
+import { projectRoutes } from "./routes/ProjectsRoutes";
+import { employeeRoutes } from "./routes/employeesRoutes";
+import { SkillsRoutes } from "./routes/SkillsRoutes";
+import DepartmentsRoutes from "./routes/DepartmentsRoutes";
+import "./config/firebaseAdmin";
+import authRoutes from "./routes/auth.routes";
+import organizationRoutes from "./routes/organization.routes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-  const count = await prisma.developer.count();
-  res.send(`There are ${count} developers in the database.`);
-});
+// Routes
+app.use("/projects", projectRoutes);
+app.use("/employees", employeeRoutes);
+app.use("/skills", SkillsRoutes);
+app.use("/departments", DepartmentsRoutes);
+app.use("/api", authRoutes);
+app.use("/api/organization", organizationRoutes);
 
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from the backend" });

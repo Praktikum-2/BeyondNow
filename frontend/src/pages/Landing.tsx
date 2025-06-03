@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import Hero from "../components/landing/Hero";
-import Features from "../components/landing/Features";
-import Footer from "../components/landing/Footer";
-import Navbar from "../components/landing/Navbar";
+import Hero from "@/components/landing/Hero";
+import Features from "@/components/landing/Features";
+import Footer from "@/components/landing/Footer";
+import Navbar from "@/components/landing/Navbar";
 
 const Landing: React.FC = () => {
   useEffect(() => {
@@ -12,7 +12,7 @@ const Landing: React.FC = () => {
           `${import.meta.env.VITE_API_URL_LOCAL}/api/hello`
         );
         const data = await res.json();
-        console.log("Backend says:", data.message); // Should log: Hello from Express...
+        console.log("Backend says:", data.message); // Should log: Hello from Express.
       } catch (error) {
         console.error("Error fetching from backend:", error);
       }
