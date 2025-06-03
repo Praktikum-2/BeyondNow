@@ -4,7 +4,7 @@ import { createProject, getProjects } from "../controllers/ProjectsController";
 const projectRoutes = Router();
 
 // kreiranje projekta
-projectRoutes.post("/createNew", createProject);
+projectRoutes.post("/create", createProject);
 
 // pridobivanje projektov
 projectRoutes.get("/getAll", getProjects);
