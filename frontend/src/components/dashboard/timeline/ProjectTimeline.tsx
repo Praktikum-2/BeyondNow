@@ -15,14 +15,14 @@ const generateDates = (startDate: Date, days: number) => {
 };
 
 const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat("sl-SI", {
+  return new Intl.DateTimeFormat("en-US", {
     day: "numeric",
     month: "short",
   }).format(date);
 };
 
 const getDayName = (date: Date) => {
-  return new Intl.DateTimeFormat("sl-SI", { weekday: "short" }).format(date);
+  return new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
 };
 
 const isWeekend = (date: Date) => {
@@ -98,9 +98,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
   return (
     <div className='bg-white rounded-lg shadow-sm border border-gray-100'>
       <div className='px-5 py-4 border-b border-gray-100 flex items-center justify-between'>
-        <h2 className='text-lg font-medium text-gray-900'>
-          Časovnica projektov
-        </h2>
+        <h2 className='text-lg font-medium text-gray-900'>Projects Timeline</h2>
 
         <div className='flex items-center space-x-2'>
           {/* Navigation buttons */}
@@ -127,7 +125,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
           <thead>
             <tr className='bg-gray-50'>
               <th className='sticky left-0 z-10 bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 min-w-[200px]'>
-                Projekt
+                Project
               </th>
               {dates.map((date, index) => (
                 <th
@@ -159,7 +157,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
                       </div>
                       <div className='text-xs text-gray-500 flex items-center'>
                         <Users size={12} className='mr-1' />
-                        <span>{row.employees.length} zaposlenih</span>
+                        <span>{row.employees.length} Employees</span>
                       </div>
                     </div>
                   </td>
@@ -190,7 +188,7 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
                     <td className='sticky left-0 z-10 bg-gray-50 hover:bg-gray-100 px-6 py-2 whitespace-nowrap border-r border-gray-200 pl-10'>
                       <div className='text-xs font-medium text-gray-500 flex items-center'>
                         <Plus size={12} className='mr-1' />
-                        <span>{role.role} potreben</span>
+                        <span>{role.role} needed</span>
                       </div>
                     </td>
                     {dates.map((date, dateIndex) => (

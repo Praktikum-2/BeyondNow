@@ -15,14 +15,14 @@ const generateDates = (startDate: Date, days: number) => {
 };
 
 const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat("sl-SI", {
+  return new Intl.DateTimeFormat("en-US", {
     day: "numeric",
     month: "short",
   }).format(date);
 };
 
 const getDayName = (date: Date) => {
-  return new Intl.DateTimeFormat("sl-SI", { weekday: "short" }).format(date);
+  return new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
 };
 
 const isWeekend = (date: Date) => {
@@ -131,23 +131,23 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
     switch (status) {
       case "available":
         bgColor = "bg-green-500";
-        text = "Na voljo";
+        text = "Available";
         break;
       case "partially-booked":
         bgColor = "bg-yellow-500";
-        text = "Delno zaseden";
+        text = "Partially-booked";
         break;
       case "fully-booked":
         bgColor = "bg-blue-500";
-        text = "Popolnoma zaseden";
+        text = "Fully-booked";
         break;
       case "overbooked":
         bgColor = "bg-red-500";
-        text = "Prezaseden";
+        text = "Overbooked";
         break;
       default:
         bgColor = "bg-gray-500";
-        text = "Neznano";
+        text = "Unknown";
     }
 
     return (
@@ -161,9 +161,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
   return (
     <div className='bg-white rounded-lg shadow-sm border border-gray-100'>
       <div className='px-5 py-4 border-b border-gray-100 flex items-center justify-between'>
-        <h2 className='text-lg font-medium text-gray-900'>
-          Časovnica zaposlenih
-        </h2>
+        <h2 className='text-lg font-medium text-gray-900'>Employee timeline</h2>
 
         <div className='flex items-center space-x-2'>
           {/* Filter button */}
@@ -193,7 +191,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
 
       {/* Legend */}
       <div className='px-5 py-2 border-b border-gray-100 flex flex-wrap items-center text-xs text-gray-600'>
-        <div className='mr-4'>Legenda:</div>
+        <div className='mr-4'>Legend:</div>
         <div className='flex space-x-4'>
           <StatusIndicator status='available' />
           <StatusIndicator status='partially-booked' />
@@ -207,7 +205,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
           <thead>
             <tr className='bg-gray-50'>
               <th className='sticky left-0 z-10 bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 min-w-[200px]'>
-                Zaposleni
+                Employees
               </th>
               {dates.map((date, index) => (
                 <th
