@@ -33,3 +33,11 @@ export const getAllTeamMembers = async (projectId: string) => {
     },
   });
 };
+
+export const getCertainProjectManager = async (managerId: string) => {
+  return await prisma.employee.findUnique({
+    where: {
+      employee_id: managerId,
+    },
+  });
+};

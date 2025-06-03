@@ -3,6 +3,7 @@ import {
   createProject,
   getProjects,
   getTeamMembers,
+  getProjectManager,
 } from "../controllers/ProjectsController";
 
 const projectRoutes = Router();
@@ -14,5 +15,7 @@ projectRoutes.post("/create", createProject);
 projectRoutes.get("/getAll", getProjects);
 
 projectRoutes.get("/teamMembers/:projectId", getTeamMembers);
+
+projectRoutes.get("/projectManager/:managerId", getProjectManager);
 
 export { projectRoutes };
