@@ -1,7 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import type { Project } from "@/types/types";
-
-const apiUrl = import.meta.env.VITE_SITE_URL_LOCAL;
 
 interface ProjectOverviewProps {
   projects: Project[];
@@ -155,11 +154,11 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
         </table>
       </div>
       <div className='px-5 py-3 border-t border-gray-100 text-right'>
-        <a
-          href={`${apiUrl}/dashboard/projects`}
+        <Link
+          to='/dashboard/projects'
           className='text-sm font-medium text-blue-600 hover:text-blue-800'>
           Show all projects
-        </a>
+        </Link>
       </div>
     </div>
   );

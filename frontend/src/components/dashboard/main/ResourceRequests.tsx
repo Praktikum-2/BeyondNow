@@ -1,8 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
 import type { ResourceRequest, Project } from "@/types/types";
-
-const apiUrl = import.meta.env.VITE_SITE_URL_LOCAL;
 
 interface ResourceRequestsProps {
   requests: ResourceRequest[];
@@ -128,11 +127,11 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
         )}
       </div>
       <div className='px-5 py-3 border-t border-gray-100 text-right'>
-        <a
-          href={`${apiUrl}/dashboard/requests`}
+        <Link
+          to='/dashboard/requests'
           className='text-sm font-medium text-blue-600 hover:text-blue-800'>
           Show all requests
-        </a>
+        </Link>
       </div>
     </div>
   );
