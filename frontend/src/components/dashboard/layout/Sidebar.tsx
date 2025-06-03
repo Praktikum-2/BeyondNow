@@ -1,16 +1,16 @@
+import {
+  BarChart3,
+  Briefcase,
+  Calendar,
+  FileText,
+  HelpCircle,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Users,
+} from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Calendar,
-  Users,
-  Briefcase,
-  BarChart3,
-  FileText,
-  Settings,
-  HelpCircle,
-  LogOut,
-} from "lucide-react";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -49,6 +49,7 @@ const Sidebar: React.FC = () => {
     { id: "timeline", label: "Timeline", icon: <Calendar size={18} /> },
     { id: "employees", label: "Employees", icon: <Users size={18} /> },
     { id: "projects", label: "Projects", icon: <Briefcase size={18} /> },
+    { id: "departments", label: "Departments", icon: <Briefcase size={18} /> },
     { id: "reports", label: "Reports", icon: <BarChart3 size={18} /> },
     { id: "requests", label: "Requests", icon: <FileText size={18} /> },
   ];

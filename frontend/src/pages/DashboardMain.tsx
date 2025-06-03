@@ -1,11 +1,12 @@
-import { Outlet, useLocation } from "react-router-dom";
 import Layout from "@/components/dashboard/layout/Layout";
+import { Outlet, useLocation } from "react-router-dom";
 
 const titleMap: Record<string, string> = {
   "": "Home",
   timeline: "Timeline",
   employees: "Employees",
   projects: "Projects",
+  departments: "Departments",
   reports: "Reports",
   requests: "Requests",
   settings: "Settings",
