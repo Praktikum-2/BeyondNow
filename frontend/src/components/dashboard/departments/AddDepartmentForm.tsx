@@ -16,7 +16,7 @@ export default function AddDepartmentForm({ onSuccess, onCancel }: Props) {
     const [error, setError] = useState("");
 
     // Iz .env vzamemo produkcijski URL (VITE_API_URL)
-    const baseURL = import.meta.env.VITE_API_URL || "";
+    const baseURL = import.meta.env.VITE_API_URL_LOCAL || "";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,7 +30,7 @@ export default function AddDepartmentForm({ onSuccess, onCancel }: Props) {
                 return;
             }
 
-            await axios.post(`${baseURL}/departments/create`, {
+            await axios.post(`${baseURL}/departments`, {
                 name: name.trim(),
                 leader: leader.trim() || null,
             });

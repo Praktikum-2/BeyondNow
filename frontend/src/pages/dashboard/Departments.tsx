@@ -13,8 +13,7 @@ const Departments: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showAddForm, setShowAddForm] = useState(false);
 
-    // Iz .env vzamemo produkcijski URL (VITE_API_URL)
-    const baseURL = import.meta.env.VITE_API_URL || "";
+    const baseURL = import.meta.env.VITE_API_URL_LOCAL || "";
 
     const fetchDepartments = async () => {
         try {
