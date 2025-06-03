@@ -1,4 +1,3 @@
-import { getAuth } from "firebase/auth";
 import {
   BarChart3,
   Bell,
@@ -22,29 +21,29 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [organizationName, setOrganizationName] = useState("Organization"); // default placeholder
-
+  const [organizationName, setOrganizationName] = useState("Organization");
   useEffect(() => {
     const fetchOrganization = async () => {
       try {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        if (!user) return;
-
-        const token = await user.getIdToken();
-
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) return;
+  
+        const parsedUser = JSON.parse(storedUser);
+        const uid = parsedUser?.uid;
+        if (!uid) return;
+  
         const res = await fetch(
           `${import.meta.env.VITE_API_URL_LOCAL}/api/organization/me`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              "x-user-uid": uid,
             },
           }
         );
-
+  
         if (res.ok) {
           const data = await res.json();
-          setOrganizationName(data.data.name); // assuming { name: "My Org" }
+          setOrganizationName(data.data.name);
         } else {
           console.error("Could not fetch organization name");
         }
@@ -52,9 +51,11 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
         console.error("Error fetching organization", err);
       }
     };
-
+  
     fetchOrganization();
   }, []);
+  
+  
 
   return (
     <header className='sticky top-0 z-30 bg-white border-b border-gray-200'>

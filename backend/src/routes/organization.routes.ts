@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/", authMiddleware, organizationController.createOrganization);
 
-router.get("/me", authMiddleware, organizationController.getMyOrganization);
+router.get("/me", organizationController.getMyOrganization);
 
 export default router;
