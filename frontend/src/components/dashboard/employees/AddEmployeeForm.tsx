@@ -1,30 +1,88 @@
 import React, { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import { ChooseSkills } from "./ChooseSkills";
+import type { Department } from "@/types/types";
+
+const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
 
 interface AddEmployeeFormProps {
   onSubmit: (formData: any) => void;
   onCancel: () => void;
+  departments?: Department[];
 }
+
+interface SkillOption {
+  label: string;
+  value: string;
+}
+
+interface DepartmentOption {
+  label: string;
+  value: string;
+}
+
+const fetchSkills = async (): Promise<SkillOption[]> => {
+  try {
+    const res = await fetch(`${apiUrl}/skills/getAll`);
+    if (!res.ok) throw new Error("Napaka pri pridobivanju skillov");
+    const data = await res.json();
+    return data.map((skill: any) => ({
+      label: skill.skill,
+      value: skill.skill_id || skill.name,
+    }));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+const fetchDepartments = async (): Promise<DepartmentOption[]> => {
+  try {
+    const res = await fetch(`${apiUrl}/departments/getAll`);
+    if (!res.ok) throw new Error("Napaka pri pridobivanju oddelkov");
+    const data = await res.json();
+    return data.map((dept: any) => ({
+      label: dept.name,
+      value: dept.department_id,
+    }));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
 
 const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    ime: "",
+    priimek: "",
     email: "",
-    role: "",
-    department: "",
-    skills: "",
-    imageUrl:
-      "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150",
+    department_id_fk: "",
+    skills: [] as string[],
   });
-
+  const [skillOptions, setSkillOptions] = useState<SkillOption[]>([]);
+  const [departmentOptions, setDepartmentOptions] = useState<
+    DepartmentOption[]
+  >([]);
   const modalRef = useRef<HTMLDivElement>(null);
+  const skillsPopoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetchSkills().then(setSkillOptions);
+    fetchDepartments().then(setDepartmentOptions);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(target) &&
+        skillsPopoverRef.current &&
+        !skillsPopoverRef.current.contains(target)
+      ) {
         onCancel();
       }
     };
@@ -47,17 +105,13 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const skillsArray = formData.skills
-      .split(",")
-      .map((skill) => skill.trim())
-      .filter(Boolean);
-    onSubmit({
-      ...formData,
-      skills: skillsArray,
-      id: `emp${Date.now()}`,
-    });
+    // console.log("Form data being submitted:", formData);
+
+    // Just pass the form data to the parent component
+    // Let the parent handle the API call
+    onSubmit(formData);
   };
 
   return (
@@ -79,21 +133,36 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
           <div className='space-y-4'>
             <div>
               <label
-                htmlFor='name'
+                htmlFor='ime'
                 className='block text-sm font-medium text-gray-700 mb-1'>
-                Ime in priimek <span className='text-red-500'>*</span>
+                Ime<span className='text-red-500'>*</span>
               </label>
               <input
                 type='text'
-                id='name'
-                name='name'
+                id='ime'
+                name='ime'
                 required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                value={formData.name}
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
+                value={formData.ime}
                 onChange={handleChange}
               />
             </div>
-
+            <div>
+              <label
+                htmlFor='priimek'
+                className='block text-sm font-medium text-gray-700 mb-1'>
+                Priimek <span className='text-red-500'>*</span>
+              </label>
+              <input
+                type='text'
+                id='priimek'
+                name='priimek'
+                required
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
+                value={formData.priimek}
+                onChange={handleChange}
+              />
+            </div>
             <div>
               <label
                 htmlFor='email'
@@ -105,71 +174,45 @@ const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
                 id='email'
                 name='email'
                 required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
-
             <div>
               <label
-                htmlFor='role'
-                className='block text-sm font-medium text-gray-700 mb-1'>
-                Vloga <span className='text-red-500'>*</span>
-              </label>
-              <input
-                type='text'
-                id='role'
-                name='role'
-                required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                value={formData.role}
-                onChange={handleChange}
-                placeholder='npr. Frontend Developer'
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor='department'
+                htmlFor='department_id_fk'
                 className='block text-sm font-medium text-gray-700 mb-1'>
                 Oddelek <span className='text-red-500'>*</span>
               </label>
               <select
-                id='department'
-                name='department'
+                id='department_id_fk'
+                name='department_id_fk'
                 required
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                value={formData.department}
+                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
+                value={formData.department_id_fk}
                 onChange={handleChange}>
                 <option value=''>Izberi oddelek</option>
-                <option value='Engineering'>Engineering</option>
-                <option value='Design'>Design</option>
-                <option value='Management'>Management</option>
-                <option value='Marketing'>Marketing</option>
-                <option value='Sales'>Sales</option>
+                {departmentOptions.map((dept) => (
+                  <option key={dept.value} value={dept.value}>
+                    {dept.label}
+                  </option>
+                ))}
               </select>
             </div>
 
             <div>
-              <label
-                htmlFor='skills'
-                className='block text-sm font-medium text-gray-700 mb-1'>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
                 Veščine
               </label>
-              <input
-                type='text'
-                id='skills'
-                name='skills'
-                className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                value={formData.skills}
-                onChange={handleChange}
-                placeholder='Veščine, ločene z vejicami'
+              <ChooseSkills
+                options={skillOptions}
+                selectedSkills={formData.skills}
+                onChange={(newSkills) =>
+                  setFormData((prev) => ({ ...prev, skills: newSkills }))
+                }
+                popoverRef={skillsPopoverRef}
               />
-              <p className='mt-1 text-xs text-gray-500'>
-                Vnesi veščine, ločene z vejicami (npr. React, TypeScript, UI
-                Design)
-              </p>
             </div>
           </div>
 

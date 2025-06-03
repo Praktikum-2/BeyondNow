@@ -1,6 +1,12 @@
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
+import prisma from "./db";
+import { projectRoutes } from "./routes/ProjectsRoutes";
+import { employeeRoutes } from "./routes/employeesRoutes";
+import { SkillsRoutes } from "./routes/SkillsRoutes";
+import DepartmentsRoutes from "./routes/DepartmentsRoutes";
 import "./config/firebaseAdmin";
 import authRoutes from "./routes/auth.routes";
 import organizationRoutes from "./routes/organization.routes";
@@ -13,6 +19,10 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use("/projects", projectRoutes);
+app.use("/employees", employeeRoutes);
+app.use("/skills", SkillsRoutes);
+app.use("/departments", DepartmentsRoutes);
 app.use("/api", authRoutes);
 app.use("/api/organization", organizationRoutes);
 
