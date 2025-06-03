@@ -139,7 +139,7 @@ const Employees: React.FC = () => {
         <div className='flex space-x-3'>
           <button className='inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50'>
             <Download size={16} className='mr-2' />
-            Download
+            Export
           </button>
           <button
             onClick={() => setShowAddForm(true)}
@@ -176,7 +176,7 @@ const Employees: React.FC = () => {
           </div>
           <div className='flex gap-4'>
             <select
-              className='block w-43 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
+              className='block min-w-[10rem] pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
               disabled={loading}>
@@ -190,7 +190,7 @@ const Employees: React.FC = () => {
               ))}
             </select>
             <select
-              className='block w-43 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
+              className='block min-w-[10rem] pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}>
               <option value='all'>All applications</option>
