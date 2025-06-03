@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { getAllProjects, createNewProject } from "../models/ProjectsModels";
+import {
+  getAllProjects,
+  createNewProject,
+  getAllTeamMembers,
+} from "../models/ProjectsModels";
 
 //kreiranje projecta
 export const createProject = async (req: Request, res: Response) => {
@@ -21,5 +25,17 @@ export const getProjects = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching projects:", error);
     res.status(500).json({ error: "Error fetching projects" });
+  }
+};
+
+export const getTeamMembers = async (req: Request, res: Response) => {
+  try {
+    const projectId = req.params.projectId;
+
+    const teamMembers = await getAllTeamMembers(projectId);
+    res.status(200).json(teamMembers);
+  } catch (error) {
+    console.error("Error fetching team members:", error);
+    res.status(500).json({ error: "Error fetching team members" });
   }
 };

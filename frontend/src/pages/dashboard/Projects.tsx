@@ -1,36 +1,87 @@
-import React, { useState } from "react";
-import { Plus, Search, Filter, Calendar, Users, Clock } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Plus, Search, Filter, Calendar, Users } from "lucide-react";
 import type { Project } from "@/types/types";
-import { projects as initialProjects } from "@/data/mockData";
 import AddProjectForm from "@/components/dashboard/projects/AddProjectForm";
+import { FaUserTie } from "react-icons/fa";
+
+const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
 
 const Projects: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [teamMembersCounts, setTeamMembersCounts] = useState<
+    Record<string, number>
+  >({});
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
 
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/projects/getAll`);
+      if (!response.ok) throw new Error("Napaka pri pridobivanju projektov");
+      const data = await response.json();
+      setProjects(data);
+    } catch (error) {
+      console.error("Napaka pri fetchanju projektov:", error);
+      setProjects([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  // Fetchamo teamMembers count za vsak projekt posebej
+  useEffect(() => {
+    const fetchAllTeamMemberCounts = async () => {
+      const counts: Record<string, number> = {};
+
+      await Promise.all(
+        projects.map(async (project) => {
+          try {
+            const res = await fetch(
+              `${apiUrl}/projects/teamMembers/${project.project_id}`
+            );
+            const data = await res.json();
+            // Ker je data že število, samo nastavi:
+            counts[project.project_id] = typeof data === "number" ? data : 0;
+          } catch (err) {
+            console.error(
+              `Napaka pri fetchanju članov za projekt ${project.project_id}:`,
+              err
+            );
+            counts[project.project_id] = 0;
+          }
+        })
+      );
+
+      setTeamMembersCounts(counts);
+    };
+
+    if (projects.length > 0) {
+      fetchAllTeamMemberCounts();
+    }
+  }, [projects]);
+
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
-      (project.name?.toLowerCase().includes(searchQuery.toLowerCase()) ??
-        false) ||
-      (project.client?.toLowerCase().includes(searchQuery.toLowerCase()) ??
-        false);
-
+      project.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.client?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus =
       selectedStatus === "all" || project.status === selectedStatus;
-
     return matchesSearch && matchesStatus;
   });
 
   const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat("sl-SI", {
+    if (!dateString) return "N/A";
+    const isoDateString = dateString.replace(" ", "T");
+    const date = new Date(isoDateString);
+    return new Intl.DateTimeFormat("en-US", {
       day: "numeric",
       month: "short",
       year: "numeric",
-    }).format(new Date(dateString));
+    }).format(date);
   };
-
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case "planned":
@@ -40,7 +91,6 @@ const Projects: React.FC = () => {
       case "completed":
         return "bg-blue-100 text-blue-800";
       case "on-hold":
-        return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -61,7 +111,7 @@ const Projects: React.FC = () => {
     }
   };
 
-  const handleAddProject = (formData: any) => {
+  const handleAddProject = (formData: Project) => {
     setProjects([...projects, formData]);
     setShowAddForm(false);
   };
@@ -123,7 +173,7 @@ const Projects: React.FC = () => {
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {filteredProjects.map((project) => (
           <div
-            key={project.id}
+            key={project.project_id}
             className='bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow'>
             <div className='p-6'>
               <div className='flex justify-between items-start'>
@@ -131,7 +181,6 @@ const Projects: React.FC = () => {
                   <h3 className='text-lg font-medium text-gray-900'>
                     {project.name}
                   </h3>
-                  <p className='text-sm text-gray-500'>{project.client}</p>
                 </div>
                 <span
                   className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeClass(
@@ -149,40 +198,23 @@ const Projects: React.FC = () => {
                 <div className='flex items-center text-sm text-gray-500'>
                   <Calendar size={16} className='mr-2' />
                   <span>
-                    {formatDate(project.startDate)} -{" "}
-                    {formatDate(project.endDate)}
+                    {formatDate(project.start_date)} –{" "}
+                    {formatDate(project.end_date)}
                   </span>
                 </div>
                 <div className='flex items-center text-sm text-gray-500'>
-                  <Users size={16} className='mr-2' />
-                  <span>{project.teamMembers.length} team members</span>
+                  <FaUserTie size={16} className='mr-2' />
+                  <span>Project Manager</span>
                 </div>
                 <div className='flex items-center text-sm text-gray-500'>
-                  <Clock size={16} className='mr-2' />
-                  <span>{project.requiredRoles.length} open positions</span>
+                  <Users size={16} className='mr-2' />
+                  <span>
+                    {project.project_id in teamMembersCounts
+                      ? `${teamMembersCounts[project.project_id]} team members`
+                      : "Loading..."}
+                  </span>
                 </div>
               </div>
-
-              {project.teamMembers.length > 0 && (
-                <div className='mt-6'>
-                  <div className='flex -space-x-2'>
-                    {project.teamMembers.slice(0, 5).map((member, index) => (
-                      <div
-                        key={index}
-                        className='w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-gray-200'>
-                        <div className='w-full h-full bg-blue-500 flex items-center justify-center text-white text-xs'>
-                          {member.employeeId.substring(0, 2)}
-                        </div>
-                      </div>
-                    ))}
-                    {project.teamMembers.length > 5 && (
-                      <div className='w-8 h-8 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-xs text-gray-600 font-medium'>
-                        +{project.teamMembers.length - 5}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
             <div className='border-t border-gray-200 px-6 py-4'>
               <div className='flex justify-end space-x-3'>

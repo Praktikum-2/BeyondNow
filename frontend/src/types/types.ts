@@ -1,12 +1,12 @@
 export interface Project {
-  id: string;
+  project_id: string;
   name: string;
   client: string;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
   status: "planned" | "active" | "completed" | "on-hold";
   description: string;
-  teamMembers: AssignedEmployee[];
+  teamMembers: number;
   requiredRoles: ResourceRequest[];
 }
 
