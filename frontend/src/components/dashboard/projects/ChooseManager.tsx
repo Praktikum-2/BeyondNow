@@ -30,7 +30,7 @@ interface ChooseManagerProps {
 
 export const ChooseManager: React.FC<ChooseManagerProps> = ({
   options,
-  placeholder = "Izberi vodjo...",
+  placeholder = "Choose project manager...",
   value,
   onChange,
   popoverRef,
@@ -54,8 +54,8 @@ export const ChooseManager: React.FC<ChooseManagerProps> = ({
 
       <PopoverContent ref={popoverRef} className='w-full p-0' align='start'>
         <Command>
-          <CommandInput placeholder='Poišči...' className='h-9' />
-          <CommandEmpty>Ni rezultatov.</CommandEmpty>
+          <CommandInput placeholder='Search...' className='h-9' />
+          <CommandEmpty>No results.</CommandEmpty>
           <CommandGroup>
             {options.map((option) => (
               <CommandItem

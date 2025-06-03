@@ -55,9 +55,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
         className='bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto'
         onClick={(e) => e.stopPropagation()}>
         <div className='flex items-center justify-between px-6 py-4 border-b border-gray-200'>
-          <h2 className='text-lg font-medium text-gray-900'>
-            Nova zahteva za resurse
-          </h2>
+          <h2 className='text-lg font-medium text-gray-900'>New Request</h2>
           <button
             onClick={onCancel}
             className='text-gray-400 hover:text-gray-500 cursor-pointer transition-colors'>
@@ -72,7 +70,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
               <label
                 htmlFor='projectId'
                 className='block text-sm font-medium text-gray-700 mb-1'>
-                Projekt <span className='text-red-500'>*</span>
+                Project <span className='text-red-500'>*</span>
               </label>
               <select
                 id='projectId'
@@ -81,7 +79,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
                 className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
                 value={formData.projectId}
                 onChange={handleChange}>
-                <option value=''>Izberi projekt</option>
+                <option value=''>Choose project</option>
                 {projects.map((project) => (
                   <option key={project.id} value={project.id}>
                     {project.name}
@@ -95,7 +93,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
               <label
                 htmlFor='role'
                 className='block text-sm font-medium text-gray-700 mb-1'>
-                Vloga <span className='text-red-500'>*</span>
+                Role <span className='text-red-500'>*</span>
               </label>
               <input
                 type='text'
@@ -103,7 +101,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
                 name='role'
                 required
                 className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                placeholder='npr. Frontend Developer, Project Manager'
+                placeholder='Frontend Developer, Project Manager, etc.'
                 value={formData.role}
                 onChange={handleChange}
               />
@@ -114,20 +112,17 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
               <label
                 htmlFor='skills'
                 className='block text-sm font-medium text-gray-700 mb-1'>
-                Potrebne veščine
+                Required skills
               </label>
               <input
                 type='text'
                 id='skills'
                 name='skills'
                 className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                placeholder='npr. React, TypeScript, ločeno z vejicami'
+                placeholder='React, TypeScript etc.'
                 value={formData.skills}
                 onChange={handleChange}
               />
-              <p className='mt-1 text-xs text-gray-500'>
-                Ločite veščine z vejicami
-              </p>
             </div>
 
             {/* Date range */}
@@ -136,7 +131,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
                 <label
                   htmlFor='startDate'
                   className='block text-sm font-medium text-gray-700 mb-1'>
-                  Začetni datum <span className='text-red-500'>*</span>
+                  Start date <span className='text-red-500'>*</span>
                 </label>
                 <input
                   type='date'
@@ -152,7 +147,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
                 <label
                   htmlFor='endDate'
                   className='block text-sm font-medium text-gray-700 mb-1'>
-                  Končni datum <span className='text-red-500'>*</span>
+                  End date <span className='text-red-500'>*</span>
                 </label>
                 <input
                   type='date'
@@ -171,7 +166,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
               <label
                 htmlFor='allocation'
                 className='block text-sm font-medium text-gray-700 mb-1'>
-                Obremenitev (%)
+                Utilization (%)
               </label>
               <input
                 type='number'
@@ -184,7 +179,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
                 onChange={handleChange}
               />
               <p className='mt-1 text-xs text-gray-500'>
-                Odstotek delovnega časa (1-100)
+                Work time percantage (1-100)
               </p>
             </div>
 
@@ -193,14 +188,14 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
               <label
                 htmlFor='notes'
                 className='block text-sm font-medium text-gray-700 mb-1'>
-                Dodatne opombe
+                Notes
               </label>
               <textarea
                 id='notes'
                 name='notes'
                 rows={3}
                 className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                placeholder='Dodatne informacije o zahtevi...'
+                placeholder='Additional information about request...'
                 value={formData.notes}
                 onChange={handleChange}
               />
@@ -212,12 +207,12 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
               type='button'
               onClick={onCancel}
               className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500'>
-              Prekliči
+              Cancel
             </button>
             <button
               type='submit'
               className='px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'>
-              Oddaj zahtevo
+              Send Request
             </button>
           </div>
         </form>

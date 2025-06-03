@@ -33,11 +33,14 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
 
         const token = await user.getIdToken();
 
-        const res = await fetch(`${import.meta.env.VITE_API_URL_LOCAL}/api/organization/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL_LOCAL}/api/organization/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (res.ok) {
           const data = await res.json();
@@ -53,7 +56,6 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
     fetchOrganization();
   }, []);
 
-
   return (
     <header className='sticky top-0 z-30 bg-white border-b border-gray-200'>
       <div className='flex items-center justify-between h-16 px-4 sm:px-6'>
@@ -67,7 +69,9 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
           <nav className='text-sm text-gray-500'>
             <ol className='flex items-center space-x-1 sm:space-x-2'>
               <li>
-                <span className='text-gray-600 font-medium'>{organizationName}</span>
+                <span className='text-gray-600 font-medium'>
+                  {organizationName}
+                </span>
               </li>
               <li>
                 <span className='text-gray-400'>›</span>
@@ -88,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
             <input
               type='search'
               className='block w-full py-2 pl-10 pr-3 text-sm text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-              placeholder='Iskanje...'
+              placeholder='Search...'
               onChange={(e) => setSearchQuery(e.target.value)}
               value={searchQuery}
             />

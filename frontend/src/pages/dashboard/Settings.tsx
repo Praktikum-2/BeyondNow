@@ -5,10 +5,8 @@ const Settings: React.FC = () => {
   return (
     <div className='space-y-6'>
       <div>
-        <h1 className='text-xl font-semibold text-gray-900'>Nastavitve</h1>
-        <p className='text-sm text-gray-500 mt-1'>
-          Upravljanje nastavitev aplikacije
-        </p>
+        <h1 className='text-xl font-semibold text-gray-900'>Settings</h1>
+        <p className='text-sm text-gray-500 mt-1'>Managing account settings</p>
       </div>
 
       <div className='bg-white shadow-sm rounded-lg border border-gray-200'>
@@ -16,16 +14,16 @@ const Settings: React.FC = () => {
         <div className='border-b border-gray-200'>
           <nav className='flex -mb-px'>
             <button className='border-b-2 border-blue-500 py-4 px-6 text-sm font-medium text-blue-600'>
-              Splošno
+              Account
             </button>
             <button className='border-b-2 border-transparent py-4 px-6 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300'>
-              Obvestila
+              Notifications
             </button>
             <button className='border-b-2 border-transparent py-4 px-6 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300'>
-              Varnost
+              Security
             </button>
             <button className='border-b-2 border-transparent py-4 px-6 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300'>
-              Integracije
+              Integrations
             </button>
           </nav>
         </div>
@@ -37,14 +35,14 @@ const Settings: React.FC = () => {
             <div>
               <h3 className='text-lg font-medium text-gray-900 flex items-center'>
                 <Building size={20} className='mr-2' />
-                Podatki o podjetju
+                Company Information
               </h3>
               <div className='mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4'>
                 <div>
                   <label
                     htmlFor='company-name'
                     className='block text-sm font-medium text-gray-700'>
-                    Ime podjetja
+                    Company name
                   </label>
                   <input
                     type='text'
@@ -57,7 +55,7 @@ const Settings: React.FC = () => {
                   <label
                     htmlFor='tax-id'
                     className='block text-sm font-medium text-gray-700'>
-                    Davčna številka
+                    Tax ID
                   </label>
                   <input
                     type='text'
@@ -73,14 +71,14 @@ const Settings: React.FC = () => {
             <div className='pt-6 border-t border-gray-200'>
               <h3 className='text-lg font-medium text-gray-900 flex items-center'>
                 <Lock size={20} className='mr-2' />
-                Delovni čas
+                Work Hours
               </h3>
               <div className='mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4'>
                 <div>
                   <label
                     htmlFor='work-hours'
                     className='block text-sm font-medium text-gray-700'>
-                    Delovne ure na dan
+                    Work hours per day
                   </label>
                   <input
                     type='number'
@@ -94,16 +92,16 @@ const Settings: React.FC = () => {
                   <label
                     htmlFor='work-days'
                     className='block text-sm font-medium text-gray-700'>
-                    Delovni dnevi
+                    Working days
                   </label>
                   <select
                     id='work-days'
                     name='work-days'
                     className='mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
                     defaultValue='mon-fri'>
-                    <option value='mon-fri'>Ponedeljek - Petek</option>
-                    <option value='mon-sat'>Ponedeljek - Sobota</option>
-                    <option value='custom'>Po meri</option>
+                    <option value='mon-fri'>Monday - Friday</option>
+                    <option value='mon-sat'>Monday - Saturday</option>
+                    <option value='custom'>Custom</option>
                   </select>
                 </div>
               </div>
@@ -113,7 +111,7 @@ const Settings: React.FC = () => {
             <div className='pt-6 border-t border-gray-200'>
               <h3 className='text-lg font-medium text-gray-900 flex items-center'>
                 <Mail size={20} className='mr-2' />
-                Nastavitve e-pošte
+                Email settings
               </h3>
               <div className='mt-4 space-y-4'>
                 <div className='flex items-center'>
@@ -126,7 +124,7 @@ const Settings: React.FC = () => {
                   <label
                     htmlFor='email-reports'
                     className='ml-2 block text-sm text-gray-900'>
-                    Prejemaj tedenska poročila po e-pošti
+                    Receive weekly reports by email
                   </label>
                 </div>
                 <div className='flex items-center'>
@@ -139,7 +137,7 @@ const Settings: React.FC = () => {
                   <label
                     htmlFor='email-notifications'
                     className='ml-2 block text-sm text-gray-900'>
-                    Prejemaj obvestila o spremembah projektov
+                    Receive notifications abouts project changes
                   </label>
                 </div>
               </div>
@@ -149,14 +147,14 @@ const Settings: React.FC = () => {
             <div className='pt-6 border-t border-gray-200'>
               <h3 className='text-lg font-medium text-gray-900 flex items-center'>
                 <Database size={20} className='mr-2' />
-                Upravljanje s podatki
+                Data Management
               </h3>
               <div className='mt-4 space-y-4'>
                 <button className='inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50'>
-                  Izvozi vse podatke
+                  Export all data
                 </button>
-                <button className='block text-sm text-red-600 hover:text-red-500'>
-                  Izbriši vse podatke
+                <button className='block text-sm border px-4 py-2 border-red-200 text-red-600 rounded-md bg-red-300 hover:bg-red-250 hover:text-red-500 font-medium'>
+                  Delete all data
                 </button>
               </div>
             </div>
@@ -166,7 +164,7 @@ const Settings: React.FC = () => {
           <div className='mt-6 flex justify-end'>
             <button className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'>
               <Save size={16} className='mr-2' />
-              Shrani spremembe
+              Save changes
             </button>
           </div>
         </div>

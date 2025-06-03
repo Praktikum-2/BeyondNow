@@ -49,13 +49,13 @@ const Projects: React.FC = () => {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "planned":
-        return "Načrtovan";
+        return "Planned";
       case "active":
-        return "Aktiven";
+        return "Active";
       case "completed":
-        return "Zaključen";
+        return "Completed";
       case "on-hold":
-        return "Na čakanju";
+        return "On-hold";
       default:
         return status;
     }
@@ -70,16 +70,16 @@ const Projects: React.FC = () => {
     <div className='space-y-6'>
       <div className='flex justify-between items-start'>
         <div>
-          <h1 className='text-xl font-semibold text-gray-900'>Projekti</h1>
+          <h1 className='text-xl font-semibold text-gray-900'>Projects</h1>
           <p className='text-sm text-gray-500 mt-1'>
-            Pregled in upravljanje projektov
+            Overview and managing projects
           </p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
           className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
           <Plus size={16} className='mr-2' />
-          Nov projekt
+          New project
         </button>
       </div>
 
@@ -94,7 +94,7 @@ const Projects: React.FC = () => {
               <input
                 type='text'
                 className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-                placeholder='Išči po imenu projekta ali stranki...'
+                placeholder='Search by project name or client...'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -105,15 +105,15 @@ const Projects: React.FC = () => {
               className='block w-40 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}>
-              <option value='all'>Vsi statusi</option>
-              <option value='planned'>Načrtovani</option>
-              <option value='active'>Aktivni</option>
-              <option value='completed'>Zaključeni</option>
-              <option value='on-hold'>Na čakanju</option>
+              <option value='all'>All statuses</option>
+              <option value='planned'>Planned</option>
+              <option value='active'>Active</option>
+              <option value='completed'>Completed</option>
+              <option value='on-hold'>On-hold</option>
             </select>
             <button className='inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50'>
               <Filter size={16} className='mr-2' />
-              Filtri
+              Filters
             </button>
           </div>
         </div>
@@ -155,11 +155,11 @@ const Projects: React.FC = () => {
                 </div>
                 <div className='flex items-center text-sm text-gray-500'>
                   <Users size={16} className='mr-2' />
-                  <span>{project.teamMembers.length} članov ekipe</span>
+                  <span>{project.teamMembers.length} team members</span>
                 </div>
                 <div className='flex items-center text-sm text-gray-500'>
                   <Clock size={16} className='mr-2' />
-                  <span>{project.requiredRoles.length} odprtih pozicij</span>
+                  <span>{project.requiredRoles.length} open positions</span>
                 </div>
               </div>
 
@@ -187,10 +187,10 @@ const Projects: React.FC = () => {
             <div className='border-t border-gray-200 px-6 py-4'>
               <div className='flex justify-end space-x-3'>
                 <button className='text-sm font-medium text-gray-700 hover:text-gray-900'>
-                  Podrobnosti
+                  Details
                 </button>
                 <button className='text-sm font-medium text-blue-600 hover:text-blue-700'>
-                  Uredi
+                  Edit
                 </button>
               </div>
             </div>

@@ -22,7 +22,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat("sl-SI", {
+    return new Intl.DateTimeFormat("en-US", {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -34,25 +34,25 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
       case "pending":
         return (
           <span className='px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'>
-            V obravnavi
+            Being reviewed
           </span>
         );
       case "approved":
         return (
           <span className='px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
-            Odobreno
+            Approved
           </span>
         );
       case "fulfilled":
         return (
           <span className='px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800'>
-            Zapolnjeno
+            Fulfilled
           </span>
         );
       case "rejected":
         return (
           <span className='px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'>
-            Zavrnjeno
+            Rejected
           </span>
         );
       default:
@@ -67,7 +67,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
   return (
     <div className='bg-white shadow-sm rounded-lg border border-gray-100 overflow-hidden'>
       <div className='px-5 py-4 border-b border-gray-100'>
-        <h2 className='text-lg font-medium text-gray-900'>Zahteve po virih</h2>
+        <h2 className='text-lg font-medium text-gray-900'>Resource Requests</h2>
       </div>
 
       <div className='overflow-x-auto'>
@@ -77,17 +77,17 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
               <th
                 scope='col'
                 className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Podrobnosti zahteve
+                Request Details
               </th>
               <th
                 scope='col'
                 className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Projekt
+                Project
               </th>
               <th
                 scope='col'
                 className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Časovni okvir
+                Time period
               </th>
               <th
                 scope='col'
@@ -97,7 +97,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
               <th
                 scope='col'
                 className='px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Dejanja
+                Actions
               </th>
             </tr>
           </thead>
@@ -150,7 +150,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
                     </div>
                     <div className='flex items-center'>
                       <Clock size={14} className='mr-1 text-gray-400' />
-                      <span>{request.allocation}% obremenitev</span>
+                      <span>{request.allocation}% utilization</span>
                     </div>
                   </div>
                 </td>
@@ -169,7 +169,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
                     </div>
                   )}
                   <button className='ml-2 text-blue-600 hover:text-blue-900'>
-                    Podrobnosti
+                    Details
                   </button>
                 </td>
               </tr>
@@ -180,7 +180,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
 
       {sortedRequests.length === 0 && (
         <div className='py-12 text-center text-gray-500'>
-          Ni zahtev za prikaz.
+          No requests found.
         </div>
       )}
     </div>
