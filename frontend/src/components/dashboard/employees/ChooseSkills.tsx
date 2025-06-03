@@ -32,7 +32,7 @@ export const ChooseSkills: React.FC<ChooseSkillsProps> = ({
   options,
   selectedSkills,
   onChange,
-  placeholder = "Dodaj veščine...",
+  placeholder = "Add skills...",
   popoverRef,
 }) => {
   const [open, setOpen] = React.useState(false);
@@ -66,10 +66,10 @@ export const ChooseSkills: React.FC<ChooseSkillsProps> = ({
         <PopoverContent ref={popoverRef} className='w-full p-0' align='start'>
           <Command className='w-full'>
             <div className='sticky top-0 z-10 bg-white'>
-              <CommandInput placeholder='Išči veščino...' className='h-9' />
+              <CommandInput placeholder='Look for skills...' className='h-9' />
             </div>
             <div className='max-h-52 overflow-y-auto'>
-              <CommandEmpty>Ni rezultatov.</CommandEmpty>
+              <CommandEmpty>No results.</CommandEmpty>
               <CommandGroup>
                 {options.map((option) => (
                   <CommandItem

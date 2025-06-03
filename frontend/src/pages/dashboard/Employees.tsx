@@ -131,21 +131,21 @@ const Employees: React.FC = () => {
     <div className='space-y-6'>
       <div className='flex justify-between items-start'>
         <div>
-          <h1 className='text-xl font-semibold text-gray-900'>Zaposleni</h1>
+          <h1 className='text-xl font-semibold text-gray-900'>Employees</h1>
           <p className='text-sm text-gray-500 mt-1'>
-            Upravljanje zaposlenih in njihovih veščin
+            Managing employees and their skills
           </p>
         </div>
         <div className='flex space-x-3'>
           <button className='inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50'>
             <Download size={16} className='mr-2' />
-            Izvozi
+            Download
           </button>
           <button
             onClick={() => setShowAddForm(true)}
             className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
             <Plus size={16} className='mr-2' />
-            Dodaj zaposlenega
+            Add employee
           </button>
         </div>
       </div>
@@ -168,7 +168,7 @@ const Employees: React.FC = () => {
               <input
                 type='text'
                 className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-                placeholder='Išči po imenu ali e-pošti...'
+                placeholder='Search by name or email...'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -176,12 +176,12 @@ const Employees: React.FC = () => {
           </div>
           <div className='flex gap-4'>
             <select
-              className='block w-40 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
+              className='block w-43 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
               disabled={loading}>
               <option value='all'>
-                {loading ? "Nalaganje..." : "Vsi oddelki"}
+                {loading ? "Loading..." : "All departments"}
               </option>
               {departments.map((dept) => (
                 <option key={dept.department_id} value={dept.name}>
@@ -190,10 +190,10 @@ const Employees: React.FC = () => {
               ))}
             </select>
             <select
-              className='block w-40 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
+              className='block w-43 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}>
-              <option value='all'>Vse vloge</option>
+              <option value='all'>All applications</option>
               {roles.map((role) => (
                 <option key={role} value={role}>
                   {role}
@@ -202,7 +202,7 @@ const Employees: React.FC = () => {
             </select>
             <button className='inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50'>
               <Filter size={16} className='mr-2' />
-              Filtri
+              Filters
             </button>
           </div>
         </div>
@@ -211,7 +211,7 @@ const Employees: React.FC = () => {
       {/* Loading state */}
       {employeesLoading && (
         <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center'>
-          <div className='text-sm text-gray-500'>Nalaganje zaposlenih...</div>
+          <div className='text-sm text-gray-500'>Loading employees...</div>
         </div>
       )}
 
@@ -222,22 +222,22 @@ const Employees: React.FC = () => {
             <thead className='bg-gray-50'>
               <tr>
                 <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                  Zaposleni
+                  Employee
                 </th>
                 <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                  Vloga
+                  Role
                 </th>
                 <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                  Oddelek
+                  Department
                 </th>
                 <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                  Veščine
+                  Skills
                 </th>
                 <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
                   Status
                 </th>
                 <th className='relative px-6 py-3'>
-                  <span className='sr-only'>Uredi</span>
+                  <span className='sr-only'>Edit</span>
                 </th>
               </tr>
             </thead>
@@ -248,8 +248,8 @@ const Employees: React.FC = () => {
                     colSpan={6}
                     className='px-6 py-4 text-center text-sm text-gray-500'>
                     {employees.length === 0
-                      ? "Ni zaposlenih"
-                      : "Ni ujemajočih se zaposlenih"}
+                      ? "No employees"
+                      : "No matching employees."}
                   </td>
                 </tr>
               ) : (
@@ -300,19 +300,19 @@ const Employees: React.FC = () => {
                           ))
                         ) : (
                           <span className='text-sm text-gray-400'>
-                            Ni veščin
+                            No skills
                           </span>
                         )}
                       </div>
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap'>
                       <span className='px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'>
-                        Aktiven
+                        Active
                       </span>
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
                       <button className='text-blue-600 hover:text-blue-900'>
-                        Uredi
+                        Edit
                       </button>
                     </td>
                   </tr>
