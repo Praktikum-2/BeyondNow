@@ -21,7 +21,7 @@ app.use("/projects", projectRoutes);
 app.use("/employees", employeeRoutes);
 app.use("/skills", SkillsRoutes);
 app.use("/departments", DepartmentsRoutes);
-app.use("/api", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/organization", organizationRoutes);
 
 app.get("/api/hello", (req, res) => {

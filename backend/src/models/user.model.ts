@@ -1,17 +1,30 @@
 import prisma from "../db";
-import { User } from "@prisma/client";
+import { User, Organization } from "@prisma/client";
+
+type UserWithOrganization = User & {
+  organization?: Organization | null;
+};
 
 export class UserModel {
-  static async findByUid(uid: string): Promise<User | null> {
+  static async findByUid(uid: string): Promise<UserWithOrganization | null> {
     return await prisma.user.findUnique({
       where: { uid },
+      include: {
+        organization: true,
+      },
     });
   }
 
-  static async updateEmail(uid: string, email: string): Promise<User> {
+  static async updateEmail(
+    uid: string,
+    email: string
+  ): Promise<UserWithOrganization> {
     return await prisma.user.update({
       where: { uid },
       data: { email },
+      include: {
+        organization: true,
+      },
     });
   }
 
@@ -19,20 +32,27 @@ export class UserModel {
     uid: string;
     email: string;
     name?: string | null;
-  }): Promise<User> {
+  }): Promise<UserWithOrganization> {
     return await prisma.user.create({
       data: {
         uid: userData.uid,
         email: userData.email,
         name: userData.name || null,
-        organization: undefined,
+      },
+      include: {
+        organization: true,
       },
     });
   }
 
-  static async findByEmail(email: string): Promise<User | null> {
+  static async findByEmail(
+    email: string
+  ): Promise<UserWithOrganization | null> {
     return await prisma.user.findUnique({
       where: { email },
+      include: {
+        organization: true,
+      },
     });
   }
 }
