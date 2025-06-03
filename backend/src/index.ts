@@ -1,8 +1,6 @@
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
-import cors from "cors";
-import prisma from "./db";
 import { projectRoutes } from "./routes/ProjectsRoutes";
 import { employeeRoutes } from "./routes/employeesRoutes";
 import { SkillsRoutes } from "./routes/SkillsRoutes";
