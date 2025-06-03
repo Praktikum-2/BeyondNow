@@ -1,7 +1,7 @@
 import React from "react";
 import type { Project } from "@/types/types";
 
-const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
+const apiUrl = import.meta.env.VITE_SITE_URL_LOCAL;
 
 interface ProjectOverviewProps {
   projects: Project[];

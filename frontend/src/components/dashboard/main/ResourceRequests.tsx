@@ -2,7 +2,7 @@ import React from "react";
 import { Calendar, Clock } from "lucide-react";
 import type { ResourceRequest, Project } from "@/types/types";
 
-const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
+const apiUrl = import.meta.env.VITE_SITE_URL_LOCAL;
 
 interface ResourceRequestsProps {
   requests: ResourceRequest[];
