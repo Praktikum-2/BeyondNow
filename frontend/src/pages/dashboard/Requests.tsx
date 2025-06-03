@@ -31,17 +31,17 @@ const Requests: React.FC = () => {
       <div className='flex justify-between items-center'>
         <div>
           <h1 className='text-xl font-semibold text-gray-900'>
-            Zahteve po virih
+            Resource requests
           </h1>
           <p className='text-sm text-gray-500 mt-1'>
-            Upravljanje potreb po zaposlenih za vse projekte
+            Managing employee demands for all projects
           </p>
         </div>
         <button
           onClick={() => setShowRequestForm(true)}
           className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'>
           <Plus size={16} className='mr-1' />
-          Nova zahteva
+          New request
         </button>
       </div>
 
