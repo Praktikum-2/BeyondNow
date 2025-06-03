@@ -110,6 +110,7 @@ dist
 # vitepress cache directory
 **/.vitepress/cache
 
+frontend/dist/
 # Docusaurus cache and generated files
 .docusaurus
 
@@ -137,3 +138,7 @@ dist
 
 # DS_Store
 **/.DS_Store
+
+.firebase/
+
+.env
