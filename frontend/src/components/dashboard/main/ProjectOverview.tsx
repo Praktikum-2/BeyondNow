@@ -12,7 +12,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat("sl-SI", {
+    return new Intl.DateTimeFormat("en-US", {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -50,13 +50,13 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "planned":
-        return "Načrtovan";
+        return "Planned";
       case "active":
-        return "Aktiven";
+        return "Active";
       case "completed":
-        return "Zaključen";
+        return "Completed";
       case "on-hold":
-        return "Na čakanju";
+        return "On-hold";
       default:
         return status;
     }
@@ -65,26 +65,26 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
   return (
     <div className='bg-white rounded-lg shadow-sm border border-gray-100'>
       <div className='px-5 py-4 border-b border-gray-100'>
-        <h2 className='text-lg font-medium text-gray-900'>Projekti</h2>
+        <h2 className='text-lg font-medium text-gray-900'>Projects</h2>
       </div>
       <div className='overflow-x-auto'>
         <table className='min-w-full divide-y divide-gray-200'>
           <thead className='bg-gray-50'>
             <tr>
               <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Projekt
+                Project
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Časovni okvir
+                Time period
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
                 Status
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Napredek
+                Progress
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Ekipa
+                Team
               </th>
             </tr>
           </thead>
@@ -156,7 +156,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
         <a
           href='#'
           className='text-sm font-medium text-blue-600 hover:text-blue-800'>
-          Prikaži vse projekte
+          Show all projects
         </a>
       </div>
     </div>

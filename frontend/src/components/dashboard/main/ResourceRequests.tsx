@@ -54,7 +54,7 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
   return (
     <div className='bg-white rounded-lg shadow-sm border border-gray-100'>
       <div className='px-5 py-4 border-b border-gray-100'>
-        <h2 className='text-lg font-medium text-gray-900'>Potrebe po virih</h2>
+        <h2 className='text-lg font-medium text-gray-900'>Resource Requests</h2>
       </div>
       <div className='p-1'>
         {pendingRequests.length > 0 ? (
@@ -77,12 +77,12 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
                       request.status
                     )}`}>
                     {request.status === "pending"
-                      ? "V obravnavi"
+                      ? "Being reviewed"
                       : request.status === "approved"
-                      ? "Odobreno"
+                      ? "Approved"
                       : request.status === "fulfilled"
-                      ? "Zapolnjeno"
-                      : "Zavrnjeno"}
+                      ? "Fulfilled"
+                      : "Rejected"}
                   </span>
                 </div>
                 <div className='flex flex-col space-y-2 text-sm'>
@@ -94,7 +94,7 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
                   </div>
                   <div className='flex items-center text-gray-600'>
                     <Clock size={14} className='mr-2' />
-                    <span>{request.allocation}% obremenitev</span>
+                    <span>{request.allocation}% utilization</span>
                   </div>
                   {request.skills.length > 0 && (
                     <div className='flex flex-wrap gap-1 mt-2'>
@@ -110,10 +110,10 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
                 </div>
                 <div className='mt-3 flex space-x-2'>
                   <button className='px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors'>
-                    Odobri
+                    Approve
                   </button>
                   <button className='px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors'>
-                    Podrobnosti
+                    Details
                   </button>
                 </div>
               </li>
@@ -121,7 +121,7 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
           </ul>
         ) : (
           <div className='py-8 px-4 text-center text-gray-500'>
-            Ni odprtih zahtev za resurse.
+            No pending resource requests.
           </div>
         )}
       </div>
@@ -129,7 +129,7 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
         <a
           href='#'
           className='text-sm font-medium text-blue-600 hover:text-blue-800'>
-          Prikaži vse zahteve
+          Show all requests
         </a>
       </div>
     </div>

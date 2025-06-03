@@ -24,10 +24,11 @@ const UtilizationChart: React.FC<UtilizationChartProps> = ({ data }) => {
     <div className='bg-white rounded-xl shadow-md border border-gray-100 p-6'>
       <div className='mb-5'>
         <h2 className='text-xl font-semibold text-gray-900'>
-          Zasedenost virov
+          Resource utilization
         </h2>
         <p className='text-sm text-gray-500'>
-          Pregled zasedenosti v zadnjem tednu
+          {" "}
+          Last week utilization managing{" "}
         </p>
       </div>
 
@@ -64,7 +65,7 @@ const UtilizationChart: React.FC<UtilizationChartProps> = ({ data }) => {
                       height: `${(item.overallocated / 100) * chartHeight}px`,
                       transition: "all 0.3s ease",
                     }}
-                    title={`Preobremenjeno: ${item.overallocated.toFixed(
+                    title={`Overutilized: ${item.overallocated.toFixed(
                       1
                     )}%`}></div>
                 )}
@@ -76,7 +77,7 @@ const UtilizationChart: React.FC<UtilizationChartProps> = ({ data }) => {
                     height: `${(item.utilized / 100) * chartHeight}px`,
                     transition: "all 0.3s ease",
                   }}
-                  title={`Zasedeno: ${item.utilized.toFixed(1)}%`}></div>
+                  title={`Utilized: ${item.utilized.toFixed(1)}%`}></div>
 
                 {/* Available */}
                 <div
@@ -85,7 +86,7 @@ const UtilizationChart: React.FC<UtilizationChartProps> = ({ data }) => {
                     height: `${(item.available / 100) * chartHeight}px`,
                     transition: "all 0.3s ease",
                   }}
-                  title={`Na voljo: ${item.available.toFixed(1)}%`}></div>
+                  title={`Available: ${item.available.toFixed(1)}%`}></div>
 
                 {/* X-axis label */}
                 <div className='absolute -bottom-6 w-full text-center text-xs text-gray-500'>
@@ -100,15 +101,15 @@ const UtilizationChart: React.FC<UtilizationChartProps> = ({ data }) => {
         <div className='flex items-center justify-center mt-10 space-x-6 text-sm'>
           <div className='flex items-center gap-1'>
             <div className='w-3 h-3 bg-red-400 rounded-sm'></div>
-            <span className='text-gray-600'>Preobremenjeno</span>
+            <span className='text-gray-600'>Overutilized</span>
           </div>
           <div className='flex items-center gap-1'>
             <div className='w-3 h-3 bg-blue-400 rounded-sm'></div>
-            <span className='text-gray-600'>Zasedeno</span>
+            <span className='text-gray-600'>Utilized</span>
           </div>
           <div className='flex items-center gap-1'>
             <div className='w-3 h-3 bg-green-300 rounded-sm'></div>
-            <span className='text-gray-600'>Na voljo</span>
+            <span className='text-gray-600'>Available</span>
           </div>
         </div>
       </div>

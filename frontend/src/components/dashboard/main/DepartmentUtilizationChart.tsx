@@ -21,10 +21,10 @@ const DepartmentUtilizationChart: React.FC<DepartmentUtilizationChartProps> = ({
     <div className='bg-white rounded-lg shadow-sm border border-gray-100 p-5'>
       <div className='mb-5'>
         <h2 className='text-lg font-medium text-gray-900'>
-          Zasedenost po oddelkih
+          Utilization by departments
         </h2>
         <p className='text-sm text-gray-500'>
-          Povprečna zasedenost v trenutnem mesecu
+          Avg. utilization in current month
         </p>
       </div>
 
