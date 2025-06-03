@@ -1,16 +1,17 @@
-import { Routes, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
-import DashboardMain from "./pages/DashboardMain";
-import LoginPage from "./pages/Login";
-import SignupPage from "./pages/Signup";
-import Dashboard from "./pages/dashboard/Home";
-import Timeline from "./pages/dashboard/Timeline";
-import Requests from "./pages/dashboard/Requests";
+import { Route, Routes } from "react-router-dom";
+import Departments from "./pages/dashboard/Departments";
 import Employees from "./pages/dashboard/Employees";
+import Dashboard from "./pages/dashboard/Home";
 import Projects from "./pages/dashboard/Projects";
 import Reports from "./pages/dashboard/Reports";
+import Requests from "./pages/dashboard/Requests";
 import Settings from "./pages/dashboard/Settings";
+import Timeline from "./pages/dashboard/Timeline";
+import DashboardMain from "./pages/DashboardMain";
 import FirstLogin from "./pages/FirstLogin";
+import Landing from "./pages/Landing";
+import LoginPage from "./pages/Login";
+import SignupPage from "./pages/Signup";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path='requests' element={<Requests />} />
         <Route path='employees' element={<Employees />} />
         <Route path='projects' element={<Projects />} />
+        <Route path='departments' element={<Departments />} />
         <Route path='reports' element={<Reports />} />
         <Route path='settings' element={<Settings />} />
         <Route path='help' element={<div>Help coming soon...</div>} />

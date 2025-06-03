@@ -1,13 +1,13 @@
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
-import { projectRoutes } from "./routes/ProjectsRoutes";
-import { employeeRoutes } from "./routes/employeesRoutes";
-import { SkillsRoutes } from "./routes/SkillsRoutes";
-import DepartmentsRoutes from "./routes/DepartmentsRoutes";
 import "./config/firebaseAdmin";
 import authRoutes from "./routes/auth.routes";
+import DepartmentsRoutes from "./routes/DepartmentsRoutes";
+import { employeeRoutes } from "./routes/employeesRoutes";
 import organizationRoutes from "./routes/organization.routes";
+import { projectRoutes } from "./routes/ProjectsRoutes";
+import { SkillsRoutes } from "./routes/SkillsRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
