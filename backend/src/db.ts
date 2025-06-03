@@ -11,6 +11,7 @@ async function checkDbConnection() {
     process.exit(1);
   }
 }
+
 checkDbConnection();
 
 export default prisma;
