@@ -2,6 +2,8 @@ import React from "react";
 import { Calendar, Clock } from "lucide-react";
 import type { ResourceRequest, Project } from "@/types/types";
 
+const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
+
 interface ResourceRequestsProps {
   requests: ResourceRequest[];
   projects: Project[];
@@ -127,7 +129,7 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
       </div>
       <div className='px-5 py-3 border-t border-gray-100 text-right'>
         <a
-          href='#'
+          href={`${apiUrl}/dashboard/requests`}
           className='text-sm font-medium text-blue-600 hover:text-blue-800'>
           Show all requests
         </a>
