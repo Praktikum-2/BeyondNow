@@ -12,7 +12,7 @@ export const getAllDepartments = async () => {
     },
   });
 };
-/*
+
 export const createDepartment = async (data: {
   name: string;
   organization_id_fk: string;
@@ -22,11 +22,11 @@ export const createDepartment = async (data: {
     data: {
       name: data.name,
       organization_id_fk: data.organization_id_fk,
-      departmentLeader_id_fk: data.departmentLeader_id_fk || null,
+      departmentLeader_id_fk: data.departmentLeader_id_fk,
     },
   });
 };
-*/
+
 
 // Nova funkcija za pridobitev departmentov glede na organizacijo
 export const getAllDepartmentsByOrganization = async (organizationId: string) => {

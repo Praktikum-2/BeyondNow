@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware"; // Uporabi svoj tip za req
-import { getAllDepartmentsByOrganization } from "../models/DepartmentsModels";
+import { createDepartment, getAllDepartmentsByOrganization } from "../models/DepartmentsModels";
 import { getOrganizationByUserUid } from "../services/organization.service";
 
 export const getDepartments = async (req: AuthenticatedRequest, res: Response) => {
@@ -36,7 +36,7 @@ export const getDepartments = async (req: AuthenticatedRequest, res: Response) =
     });
   }
 };
-/*
+
 export const addDepartment = async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Preveri, če je uporabnik avtenticiran
@@ -49,9 +49,9 @@ export const addDepartment = async (req: AuthenticatedRequest, res: Response) =>
     const { name, leader } = req.body;
 
     if (!name) {
-      res.status(400).json({ 
-        success: false, 
-        message: "Missing required field: name" 
+      res.status(400).json({
+        success: false,
+        message: "Missing required field: name"
       });
       return;
     }
@@ -60,9 +60,9 @@ export const addDepartment = async (req: AuthenticatedRequest, res: Response) =>
     const organization = await getOrganizationByUserUid(uid);
 
     if (!organization) {
-      res.status(404).json({ 
-        success: false, 
-        message: "Organization not found" 
+      res.status(404).json({
+        success: false,
+        message: "Organization not found"
       });
       return;
     }
@@ -74,16 +74,15 @@ export const addDepartment = async (req: AuthenticatedRequest, res: Response) =>
       departmentLeader_id_fk: leader?.trim() || null,
     });
 
-    res.status(201).json({ 
-      success: true, 
-      data: newDepartment 
+    res.status(201).json({
+      success: true,
+      data: newDepartment
     });
   } catch (error) {
     console.error("Error creating department:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Error creating department" 
+    res.status(500).json({
+      success: false,
+      message: "Error creating department"
     });
   }
 };
-*/

@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import axios from "axios";
+import { getAuth } from "firebase/auth";
 import { X } from "lucide-react";
 import { useState } from "react";
 
@@ -15,7 +15,6 @@ export default function AddDepartmentForm({ onSuccess, onCancel }: Props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    // Iz .env vzamemo produkcijski URL (VITE_API_URL)
     const baseURL = import.meta.env.VITE_API_URL_LOCAL || "";
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -30,13 +29,40 @@ export default function AddDepartmentForm({ onSuccess, onCancel }: Props) {
                 return;
             }
 
-            await axios.post(`${baseURL}/departments`, {
-                name: name.trim(),
-                leader: leader.trim() || null,
+            const user = getAuth().currentUser;
+            if (!user) {
+                setError("Uporabnik ni prijavljen.");
+                setLoading(false);
+                return;
+            }
+
+            const token = await user.getIdToken();
+
+            const response = await fetch(`${baseURL}/api/departments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    name: name.trim(),
+                    leader: leader.trim() || null,
+                }),
             });
-            setName("");
-            setLeader("");
-            onSuccess();
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    setName("");
+                    setLeader("");
+                    onSuccess();
+                } else {
+                    setError(data.message || "Napaka pri dodajanju oddelka.");
+                }
+            } else {
+                const errorData = await response.json();
+                setError(errorData.message || "Napaka pri dodajanju oddelka.");
+            }
         } catch (err: any) {
             setError("Napaka pri dodajanju oddelka.");
             console.error(err);
