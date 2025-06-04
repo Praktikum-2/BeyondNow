@@ -27,3 +27,20 @@ export const createDepartment = async (data: {
   });
 };
 */
+
+// Nova funkcija za pridobitev departmentov glede na organizacijo
+export const getAllDepartmentsByOrganization = async (organizationId: string) => {
+  return await prisma.department.findMany({
+    where: {
+      organization_id_fk: organizationId,
+    },
+    select: {
+      department_id: true,
+      name: true,
+      departmentLeader_id_fk: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+};

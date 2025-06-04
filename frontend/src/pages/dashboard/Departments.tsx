@@ -1,4 +1,5 @@
 import AddDepartmentForm from "@/components/dashboard/departments/AddDepartmentForm";
+import { getAuth } from "firebase/auth";
 import { Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
@@ -13,27 +14,37 @@ const Departments: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showAddForm, setShowAddForm] = useState(false);
 
-    const baseURL = import.meta.env.VITE_API_URL_LOCAL || "";
-
-    const fetchDepartments = async () => {
-        try {
-            const response = await fetch(`${baseURL}/departments/getAll`);
-            const rawData = await response.json();
-
-            const departmentList = Array.isArray(rawData)
-                ? rawData
-                : Array.isArray(rawData.data)
-                    ? rawData.data
-                    : [];
-
-            setDepartments(departmentList);
-        } catch (error) {
-            console.error("Napaka pri nalaganju oddelkov", error);
-            setDepartments([]);
-        } finally {
+const fetchDepartments = async () => {
+    try {
+        const user = getAuth().currentUser;
+        if (!user) {
             setLoading(false);
+            return;
         }
-    };
+
+        const token = await user.getIdToken();
+        const res = await fetch(`${import.meta.env.VITE_API_URL_LOCAL}/api/departments/getAll`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            // Backend vrača { success: true, data: departments }
+            setDepartments(data.data || []);
+        } else {
+            console.error("Failed to fetch departments");
+            setDepartments([]);
+        }
+    } catch (error) {
+        console.error("Error fetching departments:", error);
+        setDepartments([]);
+    } finally {
+        setLoading(false);
+    }
+};
+
 
     useEffect(() => {
         fetchDepartments();

@@ -2,6 +2,7 @@ import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import "./config/firebaseAdmin";
+import { authMiddleware } from "./middlewares/auth.middleware";
 import authRoutes from "./routes/auth.routes";
 import DepartmentsRoutes from "./routes/DepartmentsRoutes";
 import { employeeRoutes } from "./routes/employeesRoutes";
@@ -20,7 +21,7 @@ app.use(express.json());
 app.use("/projects", projectRoutes);
 app.use("/employees", employeeRoutes);
 app.use("/skills", SkillsRoutes);
-app.use("/departments", DepartmentsRoutes);
+app.use("/api/departments", authMiddleware, DepartmentsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/organization", organizationRoutes);
 
