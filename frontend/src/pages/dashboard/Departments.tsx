@@ -20,7 +20,7 @@ type Employee = {
 
 const Departments: React.FC = () => {
     const [departments, setDepartments] = useState<Department[]>([]);
-    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [, setEmployees] = useState<Employee[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAddForm, setShowAddForm] = useState(false);
 
