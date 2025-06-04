@@ -38,6 +38,12 @@ export const getAllDepartmentsByOrganization = async (organizationId: string) =>
       department_id: true,
       name: true,
       departmentLeader_id_fk: true,
+      Developer_Department_departmentLeader_id_fkToDeveloper: {  // relacija na Employee
+        select: {
+          ime: true,
+          priimek: true,
+        },
+      },
     },
     orderBy: {
       name: "asc",
