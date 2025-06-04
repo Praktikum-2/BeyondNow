@@ -39,7 +39,7 @@ export interface AvailabilityRecord {
 export type AvailabilityStatus =
   | "available"
   | "partially-booked"
-  | "fully-booked"
+  | "almost-fully-booked"
   | "overbooked";
 
 export interface TimelineCell {
