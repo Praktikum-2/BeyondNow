@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
-import { ChooseSkills } from "./ChooseSkills";
 import type { Department } from "@/types/types";
+import { getAuth } from "firebase/auth";
+import { X } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { ChooseSkills } from "./ChooseSkills";
 
 const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
 
@@ -38,10 +39,22 @@ const fetchSkills = async (): Promise<SkillOption[]> => {
 
 const fetchDepartments = async (): Promise<DepartmentOption[]> => {
   try {
-    const res = await fetch(`${apiUrl}/departments/getAll`);
+    const user = getAuth().currentUser;
+    if (!user) throw new Error("Uporabnik ni prijavljen");
+
+    const token = await user.getIdToken();
+
+    const res = await fetch(`${apiUrl}/api/departments/getAll`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
     if (!res.ok) throw new Error("Napaka pri pridobivanju oddelkov");
-    const data = await res.json();
-    return data.map((dept: any) => ({
+    const result = await res.json();
+
+    return result.data.map((dept: any) => ({
       label: dept.name,
       value: dept.department_id,
     }));
@@ -50,6 +63,7 @@ const fetchDepartments = async (): Promise<DepartmentOption[]> => {
     return [];
   }
 };
+
 
 const AddEmployeeForm: React.FC<AddEmployeeFormProps> = ({
   onSubmit,

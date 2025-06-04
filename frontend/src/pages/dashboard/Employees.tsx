@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Plus, Search, Filter, Download } from "lucide-react";
-import type { Employee, Department, DbEmployee } from "@/types/types";
 import AddEmployeeForm from "@/components/dashboard/employees/AddEmployeeForm";
+import type { DbEmployee, Department, Employee } from "@/types/types";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Download, Filter, Plus, Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
 
@@ -41,28 +42,45 @@ const Employees: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchDepartments = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${apiUrl}/departments/getAll`);
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    const auth = getAuth();
+  
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          setLoading(true);
+          const token = await user.getIdToken();
+  
+          const response = await fetch(`${apiUrl}/api/departments/getAll`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+  
+          const result = await response.json();
+  
+          if (result.success && result.data) {
+            setDepartments(result.data);
+          } else {
+            throw new Error(result.message || "Napaka pri pridobivanju departmentov");
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Napaka pri pridobivanju departmentov");
+          console.error("Error fetching departments:", err);
+        } finally {
+          setLoading(false);
         }
-
-        const departmentsData: Department[] = await response.json();
-        setDepartments(departmentsData);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Error fetching departments"
-        );
-        console.error("Error fetching departments:", err);
-      } finally {
-        setLoading(false);
+      } else {
+        setError("Uporabnik ni prijavljen");
       }
-    };
-
-    fetchDepartments();
+    });
+  
+    return () => unsubscribe(); // Počisti listener ob unmountu
   }, []);
 
   const fetchEmployees = async () => {

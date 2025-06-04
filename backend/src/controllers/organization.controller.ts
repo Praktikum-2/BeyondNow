@@ -52,33 +52,30 @@ export const createOrganization = async (
   }
 };
 
-// ⬇️ Dodano
+
 export const getMyOrganization = async (
-    req: AuthenticatedRequest,
-    res: Response
-  ): Promise<void> => {
-    try {
-      if (!req.firebaseUser) {
-        res.status(401).json({ success: false, message: "Unauthorized." });
-        return;
-      }
-  
-      const { uid } = req.firebaseUser;
-      const organization = await organizationService.getOrganizationByUserUid(uid);
-  
-      if (!organization) {
-        res.status(404).json({ success: false, message: "Organization not found." });
-        return;
-      }
-  
-      res.status(200).json({ success: true, data: organization });
-    } catch (error: any) {
-      console.error("Error fetching organization:", error);
-      res.status(500).json({
-        success: false,
-        message: "Internal Server Error",
-        ...(process.env.NODE_ENV === "development" && { error: error.message }),
-      });
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    if (!req.firebaseUser) {
+      res.status(401).json({ success: false, message: "Unauthorized" });
+      return;
     }
-  };
+
+    const { uid } = req.firebaseUser;
+    const organization = await organizationService.getOrganizationByUserUid(uid);
+
+    if (!organization) {
+      res.status(404).json({ success: false, message: "Organization not found" });
+      return;
+    }
+
+    res.status(200).json({ success: true, data: organization });
+  } catch (error: any) {
+    console.error("Error fetching organization:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
   
