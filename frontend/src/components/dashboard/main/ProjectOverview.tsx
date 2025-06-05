@@ -8,11 +8,14 @@ interface ProjectOverviewProps {
 
 const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
   const sortedProjects = [...projects].sort(
-    (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    (a, b) =>
+      new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
   );
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    if (!dateString) return "N/A";
+    const isoDateString = dateString.replace(" ", "T");
+    const date = new Date(isoDateString);
     return new Intl.DateTimeFormat("en-US", {
       day: "numeric",
       month: "short",
@@ -21,8 +24,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
   };
 
   const calculateProgress = (project: Project) => {
-    const start = new Date(project.startDate).getTime();
-    const end = new Date(project.endDate).getTime();
+    const start = new Date(project.start_date).getTime();
+    const end = new Date(project.end_date).getTime();
     const today = new Date().getTime();
 
     if (today <= start) return 0;
@@ -92,22 +95,19 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
           <tbody className='bg-white divide-y divide-gray-200'>
             {sortedProjects.map((project) => (
               <tr
-                key={project.id}
+                key={project.project_id}
                 className='hover:bg-gray-50 transition-colors'>
                 <td className='px-6 py-4 whitespace-nowrap'>
                   <div>
                     <div className='text-sm font-medium text-gray-900'>
                       {project.name}
                     </div>
-                    <div className='text-sm text-gray-500'>
-                      {project.client}
-                    </div>
                   </div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap'>
                   <div className='text-sm text-gray-900'>
-                    {formatDate(project.startDate)} -{" "}
-                    {formatDate(project.endDate)}
+                    {formatDate(project.start_date)} -{" "}
+                    {formatDate(project.end_date)}
                   </div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap'>
@@ -130,22 +130,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap'>
                   <div className='flex -space-x-2'>
-                    {project.teamMembers.slice(0, 3).map((member, index) => (
-                      <div
-                        key={index}
-                        className='w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-gray-200'
-                        title={`Team member ${index + 1}`}>
-                        {/* Here we would use actual employee images */}
-                        <div className='w-full h-full bg-blue-500 flex items-center justify-center text-white text-xs'>
-                          {member.employeeId.substring(0, 2)}
-                        </div>
-                      </div>
-                    ))}
-                    {project.teamMembers.length > 3 && (
-                      <div className='w-8 h-8 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-xs text-gray-600 font-medium'>
-                        +{project.teamMembers.length - 3}
-                      </div>
-                    )}
+                    {/* tu se bo dodalo za managerja in stevilo memberjev*/}
                   </div>
                 </td>
               </tr>
