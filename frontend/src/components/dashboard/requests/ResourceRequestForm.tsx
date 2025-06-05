@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import type { Project } from "@/types/types";
+import type { ProjectMock } from "@/types/types";
 
 interface ResourceRequestFormProps {
-  projects: Project[];
+  projects: ProjectMock[];
   onSubmit: (formData: any) => void;
   onCancel: () => void;
 }

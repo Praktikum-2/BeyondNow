@@ -1,10 +1,10 @@
 import React from "react";
 import { Calendar, Clock, CheckCircle, XCircle, User } from "lucide-react";
-import type { ResourceRequest, Project } from "@/types/types";
+import type { ResourceRequest, ProjectMock } from "@/types/types";
 
 interface RequestsTableProps {
   requests: ResourceRequest[];
-  projects: Project[];
+  projects: ProjectMock[];
 }
 
 const RequestsTable: React.FC<RequestsTableProps> = ({
