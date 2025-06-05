@@ -1,13 +1,37 @@
 export interface Project {
-  id: string;
+  project_id: string;
   name: string;
-  client: string;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
+  projectManager_id: string;
+  description: string;
+  status: "planned" | "active" | "completed" | "on-hold";
+}
+
+export interface ProjectMock {
+  project_id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
   status: "planned" | "active" | "completed" | "on-hold";
   description: string;
-  teamMembers: AssignedEmployee[];
-  requiredRoles: ResourceRequest[];
+  teamMembers: {
+    employeeId: string;
+    allocation: number;
+    startDate: string;
+    endDate: string;
+  }[];
+  requiredRoles: {
+    id: string;
+    projectId: string;
+    role: string;
+    skills: string[];
+    startDate: string;
+    endDate: string;
+    allocation: number;
+    status: string;
+    notes: string;
+  }[];
 }
 
 export interface AssignedEmployee {
@@ -41,7 +65,7 @@ export interface AvailabilityRecord {
 export type AvailabilityStatus =
   | "available"
   | "partially-booked"
-  | "fully-booked"
+  | "almost-fully-booked"
   | "overbooked";
 
 export interface TimelineCell {

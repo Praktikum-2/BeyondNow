@@ -3,6 +3,9 @@ import EmployeeTimeline from "@/components/dashboard/timeline/EmployeeTimeline";
 import ProjectTimeline from "@/components/dashboard/timeline/ProjectTimeline";
 import { employees, projects } from "@/data/mockData";
 
+// tu bomo fetchali dejanske podatke employeejev
+//const employees = [{}];
+
 const Timeline: React.FC = () => {
   return (
     <div className='space-y-6'>

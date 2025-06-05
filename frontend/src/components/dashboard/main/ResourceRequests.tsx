@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
-import type { ResourceRequest, Project } from "@/types/types";
+import type { ResourceRequest, ProjectMock } from "@/types/types";
 
 interface ResourceRequestsProps {
   requests: ResourceRequest[];
-  projects: Project[];
+  projects: ProjectMock[];
 }
 
 const ResourceRequests: React.FC<ResourceRequestsProps> = ({
@@ -20,7 +20,7 @@ const ResourceRequests: React.FC<ResourceRequestsProps> = ({
     );
 
   const getProjectName = (projectId: string) => {
-    const project = projects.find((p) => p.id === projectId);
+    const project = projects.find((p) => p.project_id === projectId);
     return project ? project.name : "Unknown Project";
   };
 

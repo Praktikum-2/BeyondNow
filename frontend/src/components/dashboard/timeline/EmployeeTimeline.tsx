@@ -65,7 +65,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
         let status:
           | "available"
           | "partially-booked"
-          | "fully-booked"
+          | "almost-fully-booked"
           | "overbooked" = "available";
         let allocation = 0;
         let projects: { projectId: string; allocation: number }[] = [];
@@ -74,19 +74,15 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
           allocation = 100 - availabilityRecord.available;
           projects = availabilityRecord.projects;
 
-          if (availabilityRecord.available <= 0) {
-            status = "fully-booked";
-          } else if (availabilityRecord.available < 50) {
-            status = "partially-booked";
-          }
-
-          const totalAllocation = availabilityRecord.projects.reduce(
-            (sum, project) => sum + project.allocation,
-            0
-          );
-
-          if (totalAllocation > 100) {
+          // Status na osnovi allocation vrednosti
+          if (allocation >= 100) {
             status = "overbooked";
+          } else if (allocation >= 80) {
+            status = "almost-fully-booked";
+          } else if (allocation >= 30) {
+            status = "partially-booked";
+          } else {
+            status = "available";
           }
         }
 
@@ -112,13 +108,13 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
   const getCellColor = (status: string) => {
     switch (status) {
       case "available":
-        return "bg-green-100 border-green-200";
+        return "bg-red-600 border-red-700";
       case "partially-booked":
-        return "bg-yellow-100 border-yellow-200";
-      case "fully-booked":
-        return "bg-blue-100 border-blue-200";
+        return "bg-yellow-300 border-yellow-400";
+      case "almost-fully-booked":
+        return "bg-green-800 border-green-900";
       case "overbooked":
-        return "bg-red-100 border-red-200";
+        return "bg-purple-800 border-purple-900";
       default:
         return "bg-gray-100 border-gray-200";
     }
@@ -259,6 +255,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                         cell.status
                       )} transition-colors cursor-pointer`}
                       title={`${row.name}: ${cell.status} (${cell.allocation}% allocated)`}>
+                      {/* Polnilo ozadja na osnovi allocation */}
                       {cell.allocation > 0 && (
                         <div
                           className='absolute bottom-0 left-0 right-0 bg-blue-500 opacity-60'
@@ -266,6 +263,11 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                             height: `${Math.min(cell.allocation, 100)}%`,
                           }}></div>
                       )}
+
+                      {/* Tekst v sredini */}
+                      <div className='absolute inset-0 flex items-center justify-center z-10 text-white drop-shadow-sm'>
+                        {cell.allocation > 0 ? `${cell.allocation}%` : ""}
+                      </div>
                     </div>
                   </td>
                 ))}
