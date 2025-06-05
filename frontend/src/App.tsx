@@ -22,8 +22,22 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path='/' element={<Landing />} />
-        <Route path='/signup' element={<SignupPage />} />
-        <Route path='/login' element={<LoginPage />} />
+        <Route
+          path='/login'
+          element={
+            <ProtectedRoute redirectIfAuthenticated>
+              <LoginPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/signup'
+          element={
+            <ProtectedRoute redirectIfAuthenticated>
+              <SignupPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Protected route for first-time setup */}
         <Route
@@ -39,17 +53,17 @@ function App() {
         <Route
           path='/dashboard'
           element={
-            <ProtectedRoute requiresOrganization={true}>
+            <ProtectedRoute requiresOrganization>
               <DashboardMain />
             </ProtectedRoute>
           }>
           <Route index element={<Dashboard />} />
-          <Route path='timeline' element={<Timeline />} />
-          <Route path='requests' element={<Requests />} />
+          <Route path='departments' element={<Departments />} />
           <Route path='employees' element={<Employees />} />
           <Route path='projects' element={<Projects />} />
-          <Route path='departments' element={<Departments />} />
+          <Route path='requests' element={<Requests />} />
           <Route path='reports' element={<Reports />} />
+          <Route path='timeline' element={<Timeline />} />
           <Route path='settings' element={<Settings />} />
           <Route path='help' element={<div>Help coming soon...</div>} />
         </Route>

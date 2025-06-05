@@ -4,21 +4,34 @@ import { useAuth } from "@/contexts/authContext";
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiresOrganization?: boolean;
+  redirectIfAuthenticated?: boolean;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiresOrganization = false,
+  redirectIfAuthenticated = false,
 }) => {
   const { currentUser, userData, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center min-h-screen'>
-        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+      <div className='min-h-screen flex items-center justify-center'>
+        <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500'></div>
       </div>
     );
+  }
+
+  if (redirectIfAuthenticated && currentUser && userData) {
+    if (userData.hasOrganization) {
+      return <Navigate to='/dashboard' replace />;
+    }
+    return <Navigate to='/startup' replace />;
+  }
+
+  if (redirectIfAuthenticated && !currentUser) {
+    return <>{children}</>;
   }
 
   if (!currentUser) {
@@ -27,8 +40,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (!userData) {
     return (
-      <div className='flex items-center justify-center min-h-screen'>
-        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+      <div className='min-h-screen flex items-center justify-center'>
+        <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900'></div>
       </div>
     );
   }
