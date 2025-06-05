@@ -25,18 +25,26 @@ export const syncFirebaseUser = async (
     }
 
     const finalName = requestName || firebaseName;
-
-    const dbUser = await userService.findOrCreateUserByFirebase(
+    const result = await userService.findOrCreateUserByFirebase(
       uid,
       email,
       finalName
     );
 
+    const redirectTo = result.hasOrganization ? "/dashboard" : "/startup";
+
     return res.status(200).json({
       success: true,
       message: "User synchronized successfully",
       data: {
-        user: dbUser,
+        user: {
+          uid: result.user.uid,
+          email: result.user.email,
+          name: result.user.name,
+          hasOrganization: result.hasOrganization,
+        },
+        organization: result.organization,
+        redirectTo,
       },
     });
   } catch (error: any) {

@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import { GithubAuthProvider } from "firebase/auth";
 import { auth } from "@/firebase";
@@ -22,117 +23,109 @@ import { Label } from "@/components/ui/label";
 
 import { FaGoogle, FaGithub } from "react-icons/fa";
 
-async function syncUserWithBackend(idToken: string) {
-  try {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL_LOCAL}/api/auth/sync`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Sync failed");
-    }
-
-    const data = await res.json();
-    console.log("Backend sync response:", data);
-    return data;
-  } catch (error) {
-    console.error("Failed to sync with backend:", error);
-    throw error;
-  }
-}
-
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const [emailLoading, setEmailLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [githubLoading, setGithubLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleAuthAndSync = async () => {
-    const user = auth.currentUser;
-    if (user) {
-      const idToken = await user.getIdToken();
-      await syncUserWithBackend(idToken);
-    }
+  const from = location.state?.from?.pathname || "/dashboard";
+
+  const handleAuthSuccess = () => {
+    navigate(from, { replace: true });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEmailLoading(true);
+    setLoading(true);
     setError("");
 
     try {
       const email = emailRef.current?.value || "";
       const password = passwordRef.current?.value || "";
 
-      if (!email || !password) {
-        throw new Error("Please fill in all fields");
-      }
-
       await signInWithEmailAndPassword(auth, email, password);
-      await handleAuthAndSync();
-      navigate("/dashboard");
+      handleAuthSuccess();
     } catch (err: any) {
+      console.error("Login error:", err);
+
       if (err.code === "auth/user-not-found") {
-        setError("No account found with this email.");
+        setError("No account found with this email address.");
       } else if (err.code === "auth/wrong-password") {
         setError("Incorrect password.");
       } else if (err.code === "auth/invalid-email") {
         setError("Invalid email address.");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Too many failed attempts. Please try again later.");
       } else {
         setError(
           err.message || "Failed to login. Please check your credentials."
         );
       }
     } finally {
-      setEmailLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-    setError("");
+  const handleOAuthLogin = async (
+    provider: GoogleAuthProvider | GithubAuthProvider
+  ) => {
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-      await handleAuthAndSync();
-      navigate("/dashboard");
+      setLoading(true);
+      setError("");
+
+      await signInWithPopup(auth, provider);
+      handleAuthSuccess();
     } catch (err: any) {
-      console.error(err);
-      setError("Google login failed. Please try again.");
+      console.error("OAuth login error:", err);
+
+      if (err.code === "auth/popup-closed-by-user") {
+        setError("Login cancelled.");
+      } else if (err.code === "auth/account-exists-with-different-credential") {
+        const email = err.customData?.email;
+
+        if (email) {
+          try {
+            const methods = await fetchSignInMethodsForEmail(auth, email);
+            if (methods.length > 0) {
+              setError(
+                `An account already exists for ${email} using ${
+                  methods[0] === "password"
+                    ? "email/password"
+                    : methods[0].charAt(0).toUpperCase() + methods[0].slice(1)
+                } sign-in. Please use that method.`
+              );
+            } else {
+              setError(
+                "An account already exists with a different sign-in method."
+              );
+            }
+          } catch (methodErr) {
+            console.error("Error fetching sign-in methods:", methodErr);
+            setError(
+              "Something went wrong. Please try a different login method."
+            );
+          }
+        } else {
+          setError(
+            "An account already exists with a different sign-in method."
+          );
+        }
+      } else {
+        setError(err.message || "Login failed.");
+      }
     } finally {
-      setGoogleLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleGithubLogin = async () => {
-    setGithubLoading(true);
-    setError("");
-    try {
-      await signInWithPopup(auth, new GithubAuthProvider());
-      await handleAuthAndSync();
-      navigate("/dashboard");
-    } catch (err: any) {
-      console.error(err);
-      setError("GitHub login failed. Please try again.");
-    } finally {
-      setGithubLoading(false);
-    }
-  };
-
-  const isLoading = emailLoading || googleLoading || githubLoading;
+  const handleGoogleLogin = () => handleOAuthLogin(new GoogleAuthProvider());
+  const handleGitHubLogin = () => handleOAuthLogin(new GithubAuthProvider());
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -144,35 +137,35 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className='grid gap-6'>
-            <div className='flex flex-col gap-4'>
-              <Button
-                type='button'
-                variant='outline'
-                className='w-full'
-                onClick={handleGithubLogin}
-                disabled={isLoading}>
-                <FaGithub className='mr-2 h-4 w-4' />
-                {githubLoading ? "Connecting..." : "Login with GitHub"}
-              </Button>
-              <Button
-                type='button'
-                variant='outline'
-                className='w-full'
-                onClick={handleGoogleLogin}
-                disabled={isLoading}>
-                <FaGoogle className='mr-2 h-4 w-4' />
-                {googleLoading ? "Connecting..." : "Login with Google"}
-              </Button>
-            </div>
+          <form onSubmit={handleSubmit}>
+            <div className='grid gap-6'>
+              <div className='flex flex-col gap-4'>
+                <Button
+                  type='button'
+                  variant='outline'
+                  className='w-full'
+                  onClick={handleGitHubLogin}
+                  disabled={loading}>
+                  <FaGithub className='mr-2 h-4 w-4' />
+                  {loading ? "Logging in..." : "Login with GitHub"}
+                </Button>
+                <Button
+                  type='button'
+                  variant='outline'
+                  className='w-full'
+                  onClick={handleGoogleLogin}
+                  disabled={loading}>
+                  <FaGoogle className='mr-2 h-4 w-4' />
+                  {loading ? "Logging in..." : "Login with Google"}
+                </Button>
+              </div>
 
-            <div className='relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border'>
-              <span className='relative z-10 bg-background bg-white px-2 text-muted-foreground'>
-                Or continue with
-              </span>
-            </div>
+              <div className='relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border'>
+                <span className='relative z-10 bg-background bg-white px-2 text-muted-foreground'>
+                  Or continue with
+                </span>
+              </div>
 
-            <form onSubmit={handleSubmit}>
               <div className='grid gap-6'>
                 <div className='grid gap-2'>
                   <Label htmlFor='email'>Email</Label>
@@ -182,7 +175,6 @@ export function LoginForm({
                     placeholder='email@example.com'
                     required
                     ref={emailRef}
-                    disabled={isLoading}
                   />
                 </div>
                 <div className='grid gap-2'>
@@ -200,26 +192,25 @@ export function LoginForm({
                     placeholder='••••••••'
                     required
                     ref={passwordRef}
-                    disabled={isLoading}
                   />
                 </div>
-                <Button type='submit' className='w-full' disabled={isLoading}>
-                  {emailLoading ? "Logging in..." : "Login"}
+                <Button type='submit' className='w-full' disabled={loading}>
+                  {loading ? "Logging in..." : "Login"}
                 </Button>
               </div>
-            </form>
 
-            {error && (
-              <div className='text-sm text-red-500 text-center'>{error}</div>
-            )}
+              {error && (
+                <div className='text-sm text-red-500 text-center'>{error}</div>
+              )}
 
-            <div className='text-center text-sm'>
-              Don&apos;t have an account?{" "}
-              <a href='/signup' className='underline underline-offset-4'>
-                Sign up
-              </a>
+              <div className='text-center text-sm'>
+                Don&apos;t have an account?{" "}
+                <a href='/signup' className='underline underline-offset-4'>
+                  Sign up
+                </a>
+              </div>
             </div>
-          </div>
+          </form>
         </CardContent>
       </Card>
       <div className='text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  '>

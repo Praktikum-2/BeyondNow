@@ -1,16 +1,17 @@
+import {
+  BarChart3,
+  Briefcase,
+  Calendar,
+  FileText,
+  HelpCircle,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Users,
+} from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Calendar,
-  Users,
-  Briefcase,
-  BarChart3,
-  FileText,
-  Settings,
-  HelpCircle,
-  LogOut,
-} from "lucide-react";
+import { useAuth } from "@/contexts/authContext";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -38,7 +39,16 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, to, active }) => {
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
-  const currentPath = location.pathname.split("/")[2] || ""; // e.g., "projects"
+  const currentPath = location.pathname.split("/")[2] || "";
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   const mainNavItems = [
     {
@@ -49,6 +59,7 @@ const Sidebar: React.FC = () => {
     { id: "timeline", label: "Timeline", icon: <Calendar size={18} /> },
     { id: "employees", label: "Employees", icon: <Users size={18} /> },
     { id: "projects", label: "Projects", icon: <Briefcase size={18} /> },
+    { id: "departments", label: "Departments", icon: <Briefcase size={18} /> },
     { id: "reports", label: "Reports", icon: <BarChart3 size={18} /> },
     { id: "requests", label: "Requests", icon: <FileText size={18} /> },
   ];
@@ -95,7 +106,9 @@ const Sidebar: React.FC = () => {
       </nav>
 
       <div className='p-3 border-t border-gray-200'>
-        <button className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 transition-colors'>
+        <button
+          onClick={handleLogout}
+          className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-red-500 border-2 hover:border-red-300 transition-colors'>
           <LogOut size={18} />
           <span>Logout</span>
         </button>

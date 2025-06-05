@@ -20,7 +20,7 @@ const router = express.Router();
 //   }
 // });
 
-router.post("/auth/sync", authMiddleware, (req, res, next) => {
+router.post("/sync", authMiddleware, (req, res, next) => {
   Promise.resolve(syncFirebaseUser(req, res)).catch(next);
 });
 

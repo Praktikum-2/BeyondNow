@@ -1,13 +1,14 @@
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
-import { projectRoutes } from "./routes/ProjectsRoutes";
-import { employeeRoutes } from "./routes/employeesRoutes";
-import { SkillsRoutes } from "./routes/SkillsRoutes";
-import DepartmentsRoutes from "./routes/DepartmentsRoutes";
 import "./config/firebaseAdmin";
+import { authMiddleware } from "./middlewares/auth.middleware";
 import authRoutes from "./routes/auth.routes";
+import DepartmentsRoutes from "./routes/DepartmentsRoutes";
+import { employeeRoutes } from "./routes/employeesRoutes";
 import organizationRoutes from "./routes/organization.routes";
+import { projectRoutes } from "./routes/ProjectsRoutes";
+import { SkillsRoutes } from "./routes/SkillsRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,8 +21,8 @@ app.use(express.json());
 app.use("/projects", projectRoutes);
 app.use("/employees", employeeRoutes);
 app.use("/skills", SkillsRoutes);
-app.use("/departments", DepartmentsRoutes);
-app.use("/api", authRoutes);
+app.use("/api/departments", authMiddleware, DepartmentsRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/organization", organizationRoutes);
 
 app.get("/api/hello", (req, res) => {
