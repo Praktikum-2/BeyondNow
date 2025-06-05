@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/authContext";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -38,7 +39,16 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, to, active }) => {
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
-  const currentPath = location.pathname.split("/")[2] || ""; // e.g., "projects"
+  const currentPath = location.pathname.split("/")[2] || "";
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   const mainNavItems = [
     {
@@ -96,7 +106,9 @@ const Sidebar: React.FC = () => {
       </nav>
 
       <div className='p-3 border-t border-gray-200'>
-        <button className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 transition-colors'>
+        <button
+          onClick={handleLogout}
+          className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-red-500 border-2 hover:border-red-300 transition-colors'>
           <LogOut size={18} />
           <span>Logout</span>
         </button>

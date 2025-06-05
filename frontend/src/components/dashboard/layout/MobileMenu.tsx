@@ -11,6 +11,7 @@ import {
   HelpCircle,
   LogOut,
 } from "lucide-react";
+import { useAuth } from "@/contexts/authContext";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -27,6 +28,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   useLayoutEffect(() => {
     if (isOpen) {
@@ -136,7 +146,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         </div>
 
         <div className='p-3 border-t border-gray-200'>
-          <button className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 transition-colors'>
+          <button
+            onClick={handleLogout}
+            className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-red-500 border-2 hover:border-red-300 transition-colors'>
             <LogOut size={18} />
             <span>Odjava</span>
           </button>

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -22,8 +22,6 @@ import { Label } from "@/components/ui/label";
 
 import { FaGoogle, FaGithub } from "react-icons/fa";
 
-const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
-
 export function LoginForm({
   className,
   ...props
@@ -33,51 +31,12 @@ export function LoginForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Helper function to handle post-authentication flow
-  const handlePostAuth = async (firebaseUser: any) => {
-    try {
-      const idToken = await firebaseUser.getIdToken();
+  const from = location.state?.from?.pathname || "/dashboard";
 
-      const response = await fetch(`${apiUrl}/api/auth/sync`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
-        body: JSON.stringify({}),
-      });
-
-      const responseText = await response.text();
-
-      if (!response.ok) {
-        let errorData;
-        try {
-          errorData = JSON.parse(responseText);
-        } catch {
-          throw new Error("Failed to sync user");
-        }
-        throw new Error(errorData.message || "Failed to sync user");
-      }
-
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        throw new Error("Invalid server response");
-      }
-
-      if (!data.success) {
-        throw new Error(data.message || "User sync failed");
-      }
-
-      localStorage.setItem("authToken", data.data.token);
-      localStorage.setItem("user", JSON.stringify(data.data.user));
-      navigate(data.data.redirectTo);
-    } catch (error: any) {
-      console.error("Post-auth error:", error);
-      setError(error.message || "Failed to complete login process");
-    }
+  const handleAuthSuccess = () => {
+    navigate(from, { replace: true });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,12 +48,8 @@ export function LoginForm({
       const email = emailRef.current?.value || "";
       const password = passwordRef.current?.value || "";
 
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      await handlePostAuth(userCredential.user);
+      await signInWithEmailAndPassword(auth, email, password);
+      handleAuthSuccess();
     } catch (err: any) {
       console.error("Login error:", err);
 
@@ -122,8 +77,8 @@ export function LoginForm({
       setError("");
 
       const provider = new GithubAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      await handlePostAuth(userCredential.user);
+      await signInWithPopup(auth, provider);
+      handleAuthSuccess();
     } catch (err: any) {
       console.error("GitHub login error:", err);
 
@@ -147,8 +102,8 @@ export function LoginForm({
       setError("");
 
       const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      await handlePostAuth(userCredential.user);
+      await signInWithPopup(auth, provider);
+      handleAuthSuccess();
     } catch (err: any) {
       console.error("Google login error:", err);
 

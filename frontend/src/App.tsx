@@ -1,4 +1,7 @@
 import { Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./contexts/authContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+
 import Departments from "./pages/dashboard/Departments";
 import Employees from "./pages/dashboard/Employees";
 import Dashboard from "./pages/dashboard/Home";
@@ -15,23 +18,57 @@ import SignupPage from "./pages/Signup";
 
 function App() {
   return (
-    <Routes>
-      <Route path='/' element={<Landing />} />
-      <Route path='/signup' element={<SignupPage />} />
-      <Route path='/login' element={<LoginPage />} />
-      <Route path='/startup' element={<FirstLogin />} />
-      <Route path='/dashboard' element={<DashboardMain />}>
-        <Route index element={<Dashboard />} />
-        <Route path='timeline' element={<Timeline />} />
-        <Route path='requests' element={<Requests />} />
-        <Route path='employees' element={<Employees />} />
-        <Route path='projects' element={<Projects />} />
-        <Route path='departments' element={<Departments />} />
-        <Route path='reports' element={<Reports />} />
-        <Route path='settings' element={<Settings />} />
-        <Route path='help' element={<div>Help coming soon...</div>} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        {/* Public routes */}
+        <Route path='/' element={<Landing />} />
+        <Route
+          path='/login'
+          element={
+            <ProtectedRoute redirectIfAuthenticated>
+              <LoginPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/signup'
+          element={
+            <ProtectedRoute redirectIfAuthenticated>
+              <SignupPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected route for first-time setup */}
+        <Route
+          path='/startup'
+          element={
+            <ProtectedRoute>
+              <FirstLogin />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected dashboard routes - require organization */}
+        <Route
+          path='/dashboard'
+          element={
+            <ProtectedRoute requiresOrganization>
+              <DashboardMain />
+            </ProtectedRoute>
+          }>
+          <Route index element={<Dashboard />} />
+          <Route path='departments' element={<Departments />} />
+          <Route path='employees' element={<Employees />} />
+          <Route path='projects' element={<Projects />} />
+          <Route path='requests' element={<Requests />} />
+          <Route path='reports' element={<Reports />} />
+          <Route path='timeline' element={<Timeline />} />
+          <Route path='settings' element={<Settings />} />
+          <Route path='help' element={<div>Help coming soon...</div>} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 
