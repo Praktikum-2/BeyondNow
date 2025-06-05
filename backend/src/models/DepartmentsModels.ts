@@ -27,8 +27,6 @@ export const createDepartment = async (data: {
   });
 };
 
-
-// Nova funkcija za pridobitev departmentov glede na organizacijo
 export const getAllDepartmentsByOrganization = async (organizationId: string) => {
   return await prisma.department.findMany({
     where: {
@@ -38,7 +36,7 @@ export const getAllDepartmentsByOrganization = async (organizationId: string) =>
       department_id: true,
       name: true,
       departmentLeader_id_fk: true,
-      Developer_Department_departmentLeader_id_fkToDeveloper: {  // relacija na Employee
+      Developer_Department_departmentLeader_id_fkToDeveloper: {
         select: {
           ime: true,
           priimek: true,
@@ -47,6 +45,32 @@ export const getAllDepartmentsByOrganization = async (organizationId: string) =>
     },
     orderBy: {
       name: "asc",
+    },
+  });
+};
+
+export const updateDepartmentById = async (
+  departmentId: string,
+  data: {
+    name: string;
+    departmentLeader_id_fk?: string | null;
+  }
+) => {
+  return await prisma.department.update({
+    where: {
+      department_id: departmentId,
+    },
+    data: {
+      name: data.name,
+      departmentLeader_id_fk: data.departmentLeader_id_fk,
+    },
+  });
+};
+
+export const deleteDepartmentById = async (departmentId: string) => {
+  return await prisma.department.delete({
+    where: {
+      department_id: departmentId,
     },
   });
 };
