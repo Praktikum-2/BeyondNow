@@ -16,7 +16,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
   );
 
   const getProjectName = (projectId: string) => {
-    const project = projects.find((p) => p.id === projectId);
+    const project = projects.find((p) => p.project_id === projectId);
     return project ? project.name : "Unknown Project";
   };
 

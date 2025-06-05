@@ -1,10 +1,10 @@
 import type {
   Employee,
-  Project,
   ResourceRequest,
   UtilizationData,
   DepartmentUtilization,
   Metric,
+  ProjectMock,
 } from "../types/types";
 
 const today = new Date();
@@ -102,13 +102,12 @@ export const employees: Employee[] = [
   },
 ];
 
-export const projects: Project[] = [
+export const projects: ProjectMock[] = [
   {
-    id: "proj1",
+    project_id: "proj1",
     name: "E-commerce Platform",
-    client: "MegaShop d.o.o.",
-    startDate: getDateString(-10),
-    endDate: getDateString(20),
+    start_date: getDateString(-10),
+    end_date: getDateString(20),
     status: "active",
     description:
       "Development of a modern e-commerce platform with inventory management.",
@@ -147,11 +146,10 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "proj2",
+    project_id: "proj2",
     name: "Banking App Redesign",
-    client: "National Bank",
-    startDate: getDateString(5),
-    endDate: getDateString(35),
+    start_date: getDateString(5),
+    end_date: getDateString(35),
     status: "planned",
     description:
       "Redesign of the mobile banking application with enhanced security features.",
@@ -195,11 +193,10 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "proj3",
+    project_id: "proj3",
     name: "Healthcare Portal",
-    client: "City Hospital",
-    startDate: getDateString(10),
-    endDate: getDateString(50),
+    start_date: getDateString(10),
+    end_date: getDateString(50),
     status: "planned",
     description:
       "Patient portal for appointment scheduling and medical record access.",

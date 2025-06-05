@@ -8,6 +8,32 @@ export interface Project {
   status: "planned" | "active" | "completed" | "on-hold";
 }
 
+export interface ProjectMock {
+  project_id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  status: "planned" | "active" | "completed" | "on-hold";
+  description: string;
+  teamMembers: {
+    employeeId: string;
+    allocation: number;
+    startDate: string;
+    endDate: string;
+  }[];
+  requiredRoles: {
+    id: string;
+    projectId: string;
+    role: string;
+    skills: string[];
+    startDate: string;
+    endDate: string;
+    allocation: number;
+    status: string;
+    notes: string;
+  }[];
+}
+
 export interface AssignedEmployee {
   employeeId: string;
   allocation: number;
