@@ -1,7 +1,6 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import * as userService from "../services/user.service";
-import jwt from "jsonwebtoken";
 
 export const syncFirebaseUser = async (
   req: AuthenticatedRequest,
@@ -26,28 +25,13 @@ export const syncFirebaseUser = async (
     }
 
     const finalName = requestName || firebaseName;
-
     const result = await userService.findOrCreateUserByFirebase(
       uid,
       email,
       finalName
     );
 
-    // Determine redirect path based on organization
     const redirectTo = result.hasOrganization ? "/dashboard" : "/startup";
-
-    // Create JWT with user data
-    const jwtPayload = {
-      userId: result.user.uid,
-      email: result.user.email,
-      name: result.user.name,
-      hasOrganization: result.hasOrganization,
-      organization: result.organization,
-    };
-
-    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET!, {
-      expiresIn: "7d",
-    });
 
     return res.status(200).json({
       success: true,
@@ -60,7 +44,6 @@ export const syncFirebaseUser = async (
           hasOrganization: result.hasOrganization,
         },
         organization: result.organization,
-        token,
         redirectTo,
       },
     });
