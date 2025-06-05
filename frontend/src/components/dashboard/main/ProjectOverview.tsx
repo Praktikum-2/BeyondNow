@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import type { Project } from "@/types/types";
+import type { ProjectMock } from "@/types/types";
 
 interface ProjectOverviewProps {
-  projects: Project[];
+  projects: ProjectMock[];
 }
 
 const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
@@ -23,7 +23,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ projects }) => {
     }).format(date);
   };
 
-  const calculateProgress = (project: Project) => {
+  const calculateProgress = (project: ProjectMock) => {
     const start = new Date(project.start_date).getTime();
     const end = new Date(project.end_date).getTime();
     const today = new Date().getTime();

@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
-import type { ResourceRequest, Project } from "@/types/types";
+import type { ResourceRequest, ProjectMock } from "@/types/types";
 
 interface ResourceRequestsProps {
   requests: ResourceRequest[];
-  projects: Project[];
+  projects: ProjectMock[];
 }
 
 const ResourceRequests: React.FC<ResourceRequestsProps> = ({
