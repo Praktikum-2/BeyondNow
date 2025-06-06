@@ -3,6 +3,7 @@ import EditDepartmentForm from "@/components/dashboard/departments/EditDepartmen
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Dodaj na vrh
 
 type Department = {
     department_id: string;
@@ -129,6 +130,7 @@ const Departments: React.FC = () => {
         if (!leader) return "Ni dodeljen";
         return `${leader.ime}${leader.priimek ? ` ${leader.priimek}` : ""}`;
     };
+    const navigate = useNavigate();
 
     return (
         <div className="space-y-6">
@@ -226,7 +228,7 @@ const Departments: React.FC = () => {
                         <tbody className='bg-white divide-y divide-gray-200'>
                             {departments.map((d) => (
                                 <tr key={d.department_id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm">{d.name}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm" ><button className="hover:underline text-sm" onClick={() => navigate(`../../dashboard/departments/${d.department_id}`)}>{d.name}</button></td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                         {getLeaderName(d.leader)}
                                     </td>

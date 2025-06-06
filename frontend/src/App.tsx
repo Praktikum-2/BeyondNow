@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
-import { AuthProvider } from "./contexts/authContext";
+import DetailDepartmentPage from "./components/dashboard/departments/DetailDepartmentPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-
+import { AuthProvider } from "./contexts/authContext";
 import Departments from "./pages/dashboard/Departments";
 import Employees from "./pages/dashboard/Employees";
 import Dashboard from "./pages/dashboard/Home";
@@ -59,6 +59,7 @@ function App() {
           }>
           <Route index element={<Dashboard />} />
           <Route path='departments' element={<Departments />} />
+          <Route path='departments/:id' element={<DetailDepartmentPage />} />
           <Route path='employees' element={<Employees />} />
           <Route path='projects' element={<Projects />} />
           <Route path='requests' element={<Requests />} />

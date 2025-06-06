@@ -4,9 +4,46 @@ import {
   createDepartment,
   deleteDepartmentById,
   getAllDepartmentsByOrganization,
+  getDepartmentById,
+  getDepartmentEmployees,
+  getOrganizationByUserUid,
   updateDepartmentById
 } from "../models/DepartmentsModels";
-import { getOrganizationByUserUid } from "../services/organization.service";
+
+export const getDepartmentWithEmployees = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    // Get basic department info
+    const department = await getDepartmentById(id);
+    if (!department) {
+      res.status(404).json({ success: false, message: "Department not found" });
+      return;
+    }
+
+    // Get employees for this department
+    const employees = await getDepartmentEmployees(id);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        name: department.name,
+        leader: department.Developer_Department_departmentLeader_id_fkToDeveloper || null,
+        employees: employees.map(emp => ({
+          employee_id: emp.employee_id,
+          ime: emp.ime,
+          priimek: emp.priimek,
+          email: emp.email,
+          role: emp.Role.length > 0 ? emp.Role[0].employeeRole : "No role",
+          skills: emp.EmployeeSkill.map(es => es.Skills?.skill).filter(Boolean)
+        }))
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching department with employees:", error);
+    res.status(500).json({ success: false, message: "Error fetching department details" });
+  }
+};
 
 export const getDepartments = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
@@ -17,7 +54,6 @@ export const getDepartments = async (req: AuthenticatedRequest, res: Response): 
 
     const { uid } = req.firebaseUser;
     const organization = await getOrganizationByUserUid(uid);
-
     if (!organization) {
       res.status(404).json({ success: false, message: "Organization not found" });
       return;
@@ -25,18 +61,38 @@ export const getDepartments = async (req: AuthenticatedRequest, res: Response): 
 
     const departments = await getAllDepartmentsByOrganization(organization.organization_id);
 
-    res.status(200).json({
-      success: true,
-      data: departments,
-    });
+    res.status(200).json({ success: true, data: departments });
   } catch (error) {
     console.error("Error fetching departments:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching departments",
-    });
+    res.status(500).json({ success: false, message: "Error fetching departments" });
   }
 };
+
+
+export const getDepartmentDetails = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const department = await getDepartmentById(id);
+    if (!department) {
+      res.status(404).json({ success: false, message: "Department not found" });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        name: department.name,
+        leader: department.Developer_Department_departmentLeader_id_fkToDeveloper || null,
+        employees: department.Employee_Employee_department_id_fkToDepartment || [],
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching department:", error);
+    res.status(500).json({ success: false, message: "Error fetching department" });
+  }
+};
+
 
 export const addDepartment = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
@@ -54,7 +110,6 @@ export const addDepartment = async (req: AuthenticatedRequest, res: Response): P
     }
 
     const organization = await getOrganizationByUserUid(uid);
-
     if (!organization) {
       res.status(404).json({ success: false, message: "Organization not found" });
       return;
@@ -95,11 +150,12 @@ export const updateDepartment = async (req: AuthenticatedRequest, res: Response)
   }
 };
 
-export const deleteDepartment = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  try {
-    const departmentId = req.params.id;
 
-    await deleteDepartmentById(departmentId);
+export const deleteDepartment = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await deleteDepartmentById(id);
 
     res.status(200).json({ success: true, message: "Department deleted" });
   } catch (error) {
