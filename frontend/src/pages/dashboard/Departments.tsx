@@ -131,7 +131,7 @@ const Departments: React.FC = () => {
     };
 
     return (
-        <div className="space-y-6 max-w-6xl mx-auto p-6">
+        <div className="space-y-6">
             {/* Header */}
             <div className="flex justify-between items-start">
                 <div>
@@ -208,31 +208,31 @@ const Departments: React.FC = () => {
             ) : departments.length === 0 ? (
                 <p className="text-gray-600">There are no departments. Yet!</p>
             ) : (
-                <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-                    <table className="w-full table-auto border-collapse border border-gray-200">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Department name
                                 </th>
-                                <th className="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Leader
                                 </th>
-                                <th className="border border-gray-200 p-3 text-right text-sm font-medium text-gray-700">
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider ">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className='bg-white divide-y divide-gray-200'>
                             {departments.map((d) => (
-                                <tr key={d.department_id} className="even:bg-gray-50 hover:bg-gray-100">
-                                    <td className="border border-gray-200 p-3 text-sm text-gray-900">{d.name}</td>
-                                    <td className="border border-gray-200 p-3 text-sm text-gray-700">
+                                <tr key={d.department_id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900 text-sm">{d.name}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                         {getLeaderName(d.leader)}
                                     </td>
-                                    <td className="border border-gray-200 p-3 text-sm text-right space-x-2">
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-10">
                                         <button
-                                            className="text-blue-600 hover:underline text-sm"
+                                            className="text-blue-600 hover:underline text-sm "
                                             onClick={() => setDepartmentToEdit(d)}
                                         >
                                             Edit
