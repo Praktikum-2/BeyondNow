@@ -255,6 +255,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                     </div>
                   </div>
                 </td>
+                {/* podatki v grafu */}
                 {row.cells.map((cell, cellIndex) => (
                   <td
                     key={cellIndex}
@@ -262,24 +263,26 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                       isWeekend(dates[cellIndex]) ? "bg-gray-300" : ""
                     }`}>
                     <div
-                      className={`w-full h-full ${getCellColor(
-                        cell.status
-                      )} transition-colors cursor-pointer`}
+                      className={`w-full h-full ${
+                        isWeekend(dates[cellIndex])
+                          ? "bg-gray-300"
+                          : getCellColor(cell.status)
+                      } transition-colors cursor-pointer`}
                       title={`${row.name}: ${cell.status} (${cell.allocation}% allocated)`}>
                       {/* Polnilo ozadja na osnovi allocation */}
                       {cell.allocation > 0 && (
                         <div
-                          className={`absolute bottom-0 left-0 right-0 opacity-60
-                                      ${
-                                        cell.allocation >= 100
-                                          ? "bg-blue-500"
-                                          : cell.allocation >= 80
-                                          ? "bg-green-600"
-                                          : cell.allocation >= 30
-                                          ? "bg-yellow-200"
-                                          : "bg-red-400"
-                                      }
-                                    `}
+                          className={`absolute bottom-0 left-0 right-0 opacity-60 ${
+                            isWeekend(new Date(cell.date))
+                              ? "bg-gray-300"
+                              : cell.allocation >= 100
+                              ? "bg-blue-500"
+                              : cell.allocation >= 80
+                              ? "bg-green-600"
+                              : cell.allocation >= 30
+                              ? "bg-yellow-200"
+                              : "bg-red-400"
+                          }`}
                           style={{
                             height: `${Math.min(cell.allocation, 100)}%`,
                           }}></div>
@@ -287,7 +290,11 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
 
                       {/* Tekst v sredini */}
                       <div className='absolute inset-0 flex items-center justify-center z-10 text-white drop-shadow-sm'>
-                        {cell.allocation > 0 ? `${cell.allocation}%` : ""}
+                        {isWeekend(new Date(cell.date))
+                          ? ""
+                          : cell.allocation > 0
+                          ? `${cell.allocation}%`
+                          : ""}
                       </div>
                     </div>
                   </td>
