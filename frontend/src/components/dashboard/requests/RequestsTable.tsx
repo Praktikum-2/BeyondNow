@@ -1,10 +1,10 @@
 import React from "react";
 import { Calendar, Clock, CheckCircle, XCircle, User } from "lucide-react";
-import type { ResourceRequest, Project } from "@/types/types";
+import type { ResourceRequest, ProjectMock } from "@/types/types";
 
 interface RequestsTableProps {
   requests: ResourceRequest[];
-  projects: Project[];
+  projects: ProjectMock[];
 }
 
 const RequestsTable: React.FC<RequestsTableProps> = ({
@@ -16,7 +16,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({
   );
 
   const getProjectName = (projectId: string) => {
-    const project = projects.find((p) => p.id === projectId);
+    const project = projects.find((p) => p.project_id === projectId);
     return project ? project.name : "Unknown Project";
   };
 

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import type { Project } from "@/types/types";
+import type { ProjectMock } from "@/types/types";
 
 interface ResourceRequestFormProps {
-  projects: Project[];
+  projects: ProjectMock[];
   onSubmit: (formData: any) => void;
   onCancel: () => void;
 }
@@ -81,7 +81,7 @@ const ResourceRequestForm: React.FC<ResourceRequestFormProps> = ({
                 onChange={handleChange}>
                 <option value=''>Choose project</option>
                 {projects.map((project) => (
-                  <option key={project.id} value={project.id}>
+                  <option key={project.project_id} value={project.project_id}>
                     {project.name}
                   </option>
                 ))}

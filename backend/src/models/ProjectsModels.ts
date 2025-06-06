@@ -24,3 +24,20 @@ export const createNewProject = async (Rawdata: {
     data,
   });
 };
+
+export const getAllTeamMembers = async (projectId: string) => {
+  //izvedemo querry
+  return await prisma.role.count({
+    where: {
+      project_id_fk: projectId,
+    },
+  });
+};
+
+export const getCertainProjectManager = async (managerId: string) => {
+  return await prisma.employee.findUnique({
+    where: {
+      employee_id: managerId,
+    },
+  });
+};

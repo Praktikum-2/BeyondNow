@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, Users } from "lucide-react";
-import type { Project, Employee, ProjectTimelineRow } from "@/types/types";
+import type { Employee, ProjectTimelineRow, ProjectMock } from "@/types/types";
 
 const generateDates = (startDate: Date, days: number) => {
   const dates = [];
@@ -40,7 +40,7 @@ const isToday = (date: Date) => {
 };
 
 interface ProjectTimelineProps {
-  projects: Project[];
+  projects: ProjectMock[];
   employees: Employee[];
 }
 
@@ -78,10 +78,10 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
       }));
 
       return {
-        projectId: project.id,
+        projectId: project.project_id,
         projectName: project.name,
-        startDate: project.startDate,
-        endDate: project.endDate,
+        startDate: project.start_date,
+        endDate: project.end_date,
         employees: projectEmployees,
         requiredRoles,
       };
