@@ -160,6 +160,17 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
         <h2 className='text-lg font-medium text-gray-900'>Employee timeline</h2>
 
         <div className='flex items-center space-x-2'>
+          {/* drugacni pogledi na grafu*/}
+          <button className='p-1.5 rounded-md text-gray-500 hover:bg-gray-100 transition-colors'>
+            Weekly
+          </button>
+          <button className='p-1.5 rounded-md text-gray-500 hover:bg-gray-100 transition-colors'>
+            Monthly
+          </button>
+          <button className='p-1.5 rounded-md text-gray-500 hover:bg-gray-100 transition-colors mr-10'>
+            Quarterly
+          </button>
+
           {/* Filter button */}
           <button className='flex items-center px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'>
             <Filter size={14} className='mr-1' />

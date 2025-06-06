@@ -147,7 +147,7 @@ export interface DbEmployee {
   }[];
 }
 
-// Frontend Employee interface (for your React component)
+// Frontend Employee interface (for your React component) --> to je za mock data
 export interface Employee {
   id: string;
   name: string;
