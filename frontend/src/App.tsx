@@ -15,6 +15,7 @@ import FirstLogin from "./pages/FirstLogin";
 import Landing from "./pages/Landing";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
+import ProjectDetail from "./pages/dashboard/ProjectDetail";
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
           <Route path='departments' element={<Departments />} />
           <Route path='employees' element={<Employees />} />
           <Route path='projects' element={<Projects />} />
+          <Route path='projects/:projectId' element={<ProjectDetail />} />
           <Route path='requests' element={<Requests />} />
           <Route path='reports' element={<Reports />} />
           <Route path='timeline' element={<Timeline />} />

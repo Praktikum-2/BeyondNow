@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Search, Filter, Calendar, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { Project } from "@/types/types";
 import AddProjectForm from "@/components/dashboard/projects/AddProjectForm";
 import { FaUserTie } from "react-icons/fa";
@@ -17,16 +18,20 @@ const Projects: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchProjects = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${apiUrl}/projects/getAll`);
-      if (!response.ok) throw new Error("Napaka pri pridobivanju projektov");
+      if (!response.ok) throw new Error("Error fetching projects");
       const data = await response.json();
       setProjects(data);
     } catch (error) {
-      console.error("Napaka pri fetchanju projektov:", error);
+      console.error("Error fetching projects:", error);
       setProjects([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,7 +39,6 @@ const Projects: React.FC = () => {
     fetchProjects();
   }, []);
 
-  // Fetchamo teamMembers count za vsak projekt posebej
   useEffect(() => {
     const fetchData = async () => {
       const counts: Record<string, number> = {};
@@ -43,7 +47,6 @@ const Projects: React.FC = () => {
 
       await Promise.all(
         projects.map(async (project) => {
-          // Fetch team members count
           try {
             const resCount = await fetch(
               `${apiUrl}/projects/teamMembers/${project.project_id}`
@@ -53,40 +56,36 @@ const Projects: React.FC = () => {
               typeof dataCount === "number" ? dataCount : 0;
           } catch (err) {
             console.error(
-              `Napaka pri fetchanju članov za projekt ${project.project_id}:`,
+              `Error fetching team members for project ${project.project_id}:`,
               err
             );
             counts[project.project_id] = 0;
           }
 
-          // Fetch project manager data
           if (project.projectManager_id) {
             try {
-              console.log(project.projectManager_id);
               const resManager = await fetch(
                 `${apiUrl}/projects/projectManager/${project.projectManager_id}`
               );
               if (!resManager.ok) throw new Error("Manager not found");
               const managerData = await resManager.json();
-              console.log(managerData.ime, managerData.priimek);
               managers[project.project_id] = {
                 firstName: managerData.ime || "",
                 lastName: managerData.priimek || "",
               };
             } catch (err) {
               console.error(
-                `Napaka pri fetchanju managerja za projekt ${project.project_id}:`,
+                `Error fetching manager for project ${project.project_id}:`,
                 err
               );
               managers[project.project_id] = {
-                firstName: "Not determined",
+                firstName: "Not assigned",
                 lastName: "",
               };
             }
           } else {
-            // Ni managerja
             managers[project.project_id] = {
-              firstName: "Not determined",
+              firstName: "Not assigned",
               lastName: "",
             };
           }
@@ -121,6 +120,7 @@ const Projects: React.FC = () => {
       year: "numeric",
     }).format(date);
   };
+
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case "planned":
@@ -144,7 +144,7 @@ const Projects: React.FC = () => {
       case "completed":
         return "Completed";
       case "on-hold":
-        return "On-hold";
+        return "On Hold";
       default:
         return status;
     }
@@ -183,7 +183,7 @@ const Projects: React.FC = () => {
               <input
                 type='text'
                 className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-                placeholder='Search by project name or client...'
+                placeholder='Search by project name...'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -198,7 +198,7 @@ const Projects: React.FC = () => {
               <option value='planned'>Planned</option>
               <option value='active'>Active</option>
               <option value='completed'>Completed</option>
-              <option value='on-hold'>On-hold</option>
+              <option value='on-hold'>On Hold</option>
             </select>
             <button className='inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50'>
               <Filter size={16} className='mr-2' />
@@ -208,72 +208,71 @@ const Projects: React.FC = () => {
         </div>
       </div>
 
-      {/* Projects grid */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-        {filteredProjects.map((project) => (
-          <div
-            key={project.project_id}
-            className='bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow'>
-            <div className='p-6'>
-              <div className='flex justify-between items-start'>
-                <div>
-                  <h3 className='text-lg font-medium text-gray-900'>
-                    {project.name}
-                  </h3>
+      {/* Loading Spinner or Project Cards */}
+      {loading ? (
+        <div className='flex justify-center items-center h-64'>
+          <div className='animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500'></div>
+        </div>
+      ) : (
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          {filteredProjects.map((project) => (
+            <Link
+              key={project.project_id}
+              to={`/dashboard/projects/${project.project_id}`}
+              className='bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer block'>
+              <div className='p-6'>
+                <div className='flex justify-between items-start'>
+                  <div>
+                    <h3 className='text-lg font-medium text-gray-900'>
+                      {project.name}
+                    </h3>
+                  </div>
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeClass(
+                      project.status
+                    )}`}>
+                    {getStatusLabel(project.status)}
+                  </span>
                 </div>
-                <span
-                  className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeClass(
-                    project.status
-                  )}`}>
-                  {getStatusLabel(project.status)}
-                </span>
-              </div>
 
-              <p className='mt-4 text-sm text-gray-600 line-clamp-2'>
-                {project.description}
-              </p>
+                <p className='mt-4 text-sm text-gray-600 line-clamp-2'>
+                  {project.description}
+                </p>
 
-              <div className='mt-6 space-y-3'>
-                <div className='flex items-center text-sm text-gray-500'>
-                  <Calendar size={16} className='mr-2' />
-                  <span>
-                    {formatDate(project.start_date)} –{" "}
-                    {formatDate(project.end_date)}
-                  </span>
-                </div>
-                <div className='flex items-center text-sm text-gray-500'>
-                  <FaUserTie size={16} className='mr-2' />
-                  <span>
-                    {projectManagers[project.project_id]
-                      ? `${projectManagers[project.project_id].firstName} ${
-                          projectManagers[project.project_id].lastName
-                        }`
-                      : "Loading..."}
-                  </span>
-                </div>
-                <div className='flex items-center text-sm text-gray-500'>
-                  <Users size={16} className='mr-2' />
-                  <span>
-                    {project.project_id in teamMembersCounts
-                      ? `${teamMembersCounts[project.project_id]} team members`
-                      : "Loading..."}
-                  </span>
+                <div className='mt-6 space-y-3'>
+                  <div className='flex items-center text-sm text-gray-500'>
+                    <Calendar size={16} className='mr-2' />
+                    <span>
+                      {formatDate(project.start_date)} –{" "}
+                      {formatDate(project.end_date)}
+                    </span>
+                  </div>
+                  <div className='flex items-center text-sm text-gray-500'>
+                    <FaUserTie size={16} className='mr-2' />
+                    <span>
+                      {projectManagers[project.project_id]
+                        ? `${projectManagers[project.project_id].firstName} ${
+                            projectManagers[project.project_id].lastName
+                          }`
+                        : "Loading..."}
+                    </span>
+                  </div>
+                  <div className='flex items-center text-sm text-gray-500'>
+                    <Users size={16} className='mr-2' />
+                    <span>
+                      {project.project_id in teamMembersCounts
+                        ? `${
+                            teamMembersCounts[project.project_id]
+                          } team members`
+                        : "Loading..."}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className='border-t border-gray-200 px-6 py-4'>
-              <div className='flex justify-end space-x-3'>
-                <button className='text-sm font-medium text-gray-700 hover:text-gray-900'>
-                  Details
-                </button>
-                <button className='text-sm font-medium text-blue-600 hover:text-blue-700'>
-                  Edit
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {showAddForm && (
         <AddProjectForm
