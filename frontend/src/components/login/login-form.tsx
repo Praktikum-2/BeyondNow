@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import { GithubAuthProvider } from "firebase/auth";
 import { auth } from "@/firebase";
@@ -71,55 +72,60 @@ export function LoginForm({
     }
   };
 
-  const handleGitHubLogin = async () => {
+  const handleOAuthLogin = async (
+    provider: GoogleAuthProvider | GithubAuthProvider
+  ) => {
     try {
       setLoading(true);
       setError("");
 
-      const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider);
       handleAuthSuccess();
     } catch (err: any) {
-      console.error("GitHub login error:", err);
+      console.error("OAuth login error:", err);
 
       if (err.code === "auth/popup-closed-by-user") {
         setError("Login cancelled.");
       } else if (err.code === "auth/account-exists-with-different-credential") {
-        setError(
-          "An account already exists with this email using a different sign-in method."
-        );
+        const email = err.customData?.email;
+
+        if (email) {
+          try {
+            const methods = await fetchSignInMethodsForEmail(auth, email);
+            if (methods.length > 0) {
+              setError(
+                `An account already exists for ${email} using ${
+                  methods[0] === "password"
+                    ? "email/password"
+                    : methods[0].charAt(0).toUpperCase() + methods[0].slice(1)
+                } sign-in. Please use that method.`
+              );
+            } else {
+              setError(
+                "An account already exists with a different sign-in method."
+              );
+            }
+          } catch (methodErr) {
+            console.error("Error fetching sign-in methods:", methodErr);
+            setError(
+              "Something went wrong. Please try a different login method."
+            );
+          }
+        } else {
+          setError(
+            "An account already exists with a different sign-in method."
+          );
+        }
       } else {
-        setError(err.message || "GitHub login failed.");
+        setError(err.message || "Login failed.");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      handleAuthSuccess();
-    } catch (err: any) {
-      console.error("Google login error:", err);
-
-      if (err.code === "auth/popup-closed-by-user") {
-        setError("Login cancelled.");
-      } else if (err.code === "auth/account-exists-with-different-credential") {
-        setError(
-          "An account already exists with this email using a different sign-in method."
-        );
-      } else {
-        setError(err.message || "Google login failed.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleGoogleLogin = () => handleOAuthLogin(new GoogleAuthProvider());
+  const handleGitHubLogin = () => handleOAuthLogin(new GithubAuthProvider());
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

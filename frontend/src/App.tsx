@@ -15,6 +15,7 @@ import FirstLogin from "./pages/FirstLogin";
 import Landing from "./pages/Landing";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
+import NotFound from "./pages/NotFound"; // Add this import
 
 function App() {
   return (
@@ -38,7 +39,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         {/* Protected route for first-time setup */}
         <Route
           path='/startup'
@@ -48,7 +48,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         {/* Protected dashboard routes - require organization */}
         <Route
           path='/dashboard'
@@ -67,7 +66,11 @@ function App() {
           <Route path='timeline' element={<Timeline />} />
           <Route path='settings' element={<Settings />} />
           <Route path='help' element={<div>Help coming soon...</div>} />
+          {/* Catch-all route for unknown dashboard routes */}
+          <Route path='*' element={<NotFound />} />
         </Route>
+        {/* Catch-all route for any other unknown routes */}
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </AuthProvider>
   );

@@ -10,6 +10,7 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  Building2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/authContext";
 
@@ -67,12 +68,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   const mainNavItems = [
     {
       id: "",
-      label: "Home",
+      label: "Dashboard",
       icon: <LayoutDashboard size={18} />,
     },
     { id: "timeline", label: "Timeline", icon: <Calendar size={18} /> },
     { id: "employees", label: "Employees", icon: <Users size={18} /> },
     { id: "projects", label: "Projects", icon: <Briefcase size={18} /> },
+    { id: "departments", label: "Departments", icon: <Building2 size={18} /> },
     { id: "reports", label: "Reports", icon: <BarChart3 size={18} /> },
     { id: "requests", label: "Requests", icon: <FileText size={18} /> },
   ];
@@ -98,7 +100,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         }`}>
         <div className='flex items-center justify-between p-4 border-b border-gray-200'>
           <h1 className='text-lg font-semibold text-gray-900'>
-            Employee planning
+            Employee Planning
           </h1>
           <button
             onClick={onClose}
@@ -148,8 +150,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         <div className='p-3 border-t border-gray-200'>
           <button
             onClick={handleLogout}
-            className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-red-500 border-2 hover:border-red-300 transition-colors'>
-            <LogOut size={18} />
+            className='flex items-center w-full gap-3 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-md hover:bg-red-50 hover:text-red-600 border border-gray-200 hover:border-red-200 transition-all duration-200 group'>
+            <LogOut
+              size={18}
+              className='group-hover:scale-110 transition-transform duration-200'
+            />
             <span>Logout</span>
           </button>
         </div>
