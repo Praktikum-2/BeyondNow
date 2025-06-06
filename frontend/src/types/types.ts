@@ -68,6 +68,7 @@ export type AvailabilityStatus =
   | "almost-fully-booked"
   | "overbooked";
 
+// za generiranje grafa employeejev
 export interface TimelineCell {
   date: string;
   status: AvailabilityStatus;
@@ -85,6 +86,7 @@ export interface TimelineRow {
   cells: TimelineCell[];
 }
 
+// za generiranje grafa projekti --> preveri?
 export interface ProjectTimelineRow {
   projectId: string;
   projectName: string;

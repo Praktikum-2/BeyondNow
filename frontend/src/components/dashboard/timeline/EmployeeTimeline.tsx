@@ -207,7 +207,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                 <th
                   key={index}
                   className={`px-1 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 min-w-[40px] ${
-                    isWeekend(date) ? "bg-gray-100" : ""
+                    isWeekend(date) ? "bg-gray-200" : ""
                   }`}>
                   <div className='flex flex-col items-center'>
                     <span className='mb-1'>{getDayName(date)}</span>
@@ -248,7 +248,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                   <td
                     key={cellIndex}
                     className={`border border-gray-100 p-0 h-14 relative ${
-                      isWeekend(dates[cellIndex]) ? "bg-gray-50" : ""
+                      isWeekend(dates[cellIndex]) ? "bg-gray-300" : ""
                     }`}>
                     <div
                       className={`w-full h-full ${getCellColor(
@@ -258,7 +258,17 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                       {/* Polnilo ozadja na osnovi allocation */}
                       {cell.allocation > 0 && (
                         <div
-                          className='absolute bottom-0 left-0 right-0 bg-blue-500 opacity-60'
+                          className={`absolute bottom-0 left-0 right-0 opacity-60
+                                      ${
+                                        cell.allocation >= 100
+                                          ? "bg-blue-500"
+                                          : cell.allocation >= 80
+                                          ? "bg-green-600"
+                                          : cell.allocation >= 30
+                                          ? "bg-yellow-200"
+                                          : "bg-red-400"
+                                      }
+                                    `}
                           style={{
                             height: `${Math.min(cell.allocation, 100)}%`,
                           }}></div>
