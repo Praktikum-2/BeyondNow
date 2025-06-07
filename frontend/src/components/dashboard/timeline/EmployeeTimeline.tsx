@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import type { Employee, TimelineRow } from "@/types/types";
 
+// generiramo datume za prikaz v grafu
 const generateDates = (startDate: Date, days: number) => {
   const dates = [];
   const currentDate = new Date(startDate);
@@ -14,6 +15,7 @@ const generateDates = (startDate: Date, days: number) => {
   return dates;
 };
 
+// datum spremenimo v ustrezno obliko
 const formatDate = (date: Date) => {
   return new Intl.DateTimeFormat("en-US", {
     day: "numeric",
@@ -21,15 +23,18 @@ const formatDate = (date: Date) => {
   }).format(date);
 };
 
+//pridobimo ime dneva
 const getDayName = (date: Date) => {
   return new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
 };
 
+// preverimo ali je dan vikend
 const isWeekend = (date: Date) => {
   const day = date.getDay();
   return day === 0 || day === 6;
 };
 
+//preveri ali je danasnji datum enak podanemu
 const isToday = (date: Date) => {
   const today = new Date();
   return (
@@ -39,6 +44,7 @@ const isToday = (date: Date) => {
   );
 };
 
+// pridobimo podatke zaposlenih
 interface EmployeeTimelineProps {
   employees: Employee[];
 }
@@ -48,6 +54,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
   const daysToShow = 14;
   const dates = generateDates(startDate, daysToShow);
 
+  // premaknemo datume v grafu
   const navigateDays = (days: number) => {
     const newStartDate = new Date(startDate);
     newStartDate.setDate(newStartDate.getDate() + days);

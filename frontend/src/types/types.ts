@@ -53,9 +53,34 @@ export interface ResourceRequest {
   notes: string;
 }
 
+// za generiranje grafa employeejev
+// Frontend Employee interface --> to je za mock data --> probamo pšrilagodit za dejanske podatke
+export interface Employee {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  department: string;
+  imageUrl: string;
+  skills: string[];
+  availability: AvailabilityRecord[];
+}
+
 export interface AvailabilityRecord {
   date: string;
   available: number;
+  //from: string;
+  //to: string;
+  projects: {
+    projectId: string;
+    allocation: number;
+  }[];
+}
+
+export interface TimelineCell {
+  date: string;
+  status: AvailabilityStatus;
+  allocation: number;
   projects: {
     projectId: string;
     allocation: number;
@@ -67,17 +92,6 @@ export type AvailabilityStatus =
   | "partially-booked"
   | "almost-fully-booked"
   | "overbooked";
-
-// za generiranje grafa employeejev
-export interface TimelineCell {
-  date: string;
-  status: AvailabilityStatus;
-  allocation: number;
-  projects: {
-    projectId: string;
-    allocation: number;
-  }[];
-}
 
 export interface TimelineRow {
   id: string;
@@ -145,18 +159,6 @@ export interface DbEmployee {
   Role: {
     employeeRole: string | null;
   }[];
-}
-
-// Frontend Employee interface (for your React component) --> to je za mock data
-export interface Employee {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  department: string;
-  imageUrl: string;
-  skills: string[];
-  availability: AvailabilityRecord[];
 }
 
 export interface Department {

@@ -20,3 +20,13 @@ export const getEmployees = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error fetching employees" });
   }
 };
+
+export const getEmployeeforGraph = async (req: Request, res: Response) => {
+  try {
+    const employees = await getAllEmployees();
+    res.status(200).json(employees);
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    res.status(500).json({ error: "Error fetching employees" });
+  }
+};

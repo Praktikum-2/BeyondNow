@@ -1,3 +1,4 @@
+import e from "cors";
 import prisma from "../db";
 
 export const getAllEmployees = async () => {
@@ -10,6 +11,24 @@ export const getAllEmployees = async () => {
         },
       },
       Role: true,
+    },
+  });
+};
+
+export const getAllEmployeeforGraph = async () => {
+  return await prisma.employee.findMany({
+    include: {
+      Department_Employee_department_id_fkToDepartment: true,
+      Role: {
+        include: {
+          Project: true, // <- točno tako, z veliko začetnico
+        },
+      },
+      EmployeeSkill: {
+        include: {
+          Skills: true,
+        },
+      },
     },
   });
 };
