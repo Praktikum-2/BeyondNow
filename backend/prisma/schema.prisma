@@ -69,10 +69,14 @@ model EmployeeSkill {
 model Role {
   role_id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   employee_id_fk String   @db.Uuid
-  project_id_fk  String?  @db.Uuid
-  employeeRole   String?  @db.VarChar
-  Project        Project? @relation(fields: [project_id_fk], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "ProjectDeveloper_project_id_fk_fkey")
-  Employee       Employee @relation(fields: [employee_id_fk], references: [employee_id])
+  project_id_fk  String   @db.Uuid  
+  employeeRole   String   @db.VarChar 
+  allocation     Int?     @default(100) 
+  
+  Project  Project  @relation(fields: [project_id_fk], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "ProjectDeveloper_project_id_fk_fkey")
+  Employee Employee @relation(fields: [employee_id_fk], references: [employee_id], onDelete: Cascade, onUpdate: Restrict)
+  
+  @@unique([employee_id_fk, project_id_fk, employeeRole], name: "unique_employee_project_role")
 }
 
 model User {
