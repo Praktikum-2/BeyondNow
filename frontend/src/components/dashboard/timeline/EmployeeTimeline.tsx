@@ -61,13 +61,48 @@ const EmployeeTimeline: React.FC = () => {
   // zaposleni v grafu
   const [employeesGraph, setEmployeesGraph] = useState<Employee[]>([]);
 
+  //za shranjevanje filtrov --> rabo se bo za posodobljene prikaze
+  const [filters, setFilters] = useState<Filters>();
+
   // tu bomo fetchali dejanske podatke employeejev
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await fetch(`${apiUrl}/employees/getAll`);
+        let res: Response;
+
+        if (
+          (filters?.department === "" || !filters?.department) &&
+          (!filters?.skills || filters.skills.length === 0)
+        ) {
+          res = await fetch(`${apiUrl}/employees/getAll`);
+        } else if (
+          filters?.department &&
+          filters.department !== "" &&
+          (!filters?.skills || filters.skills.length === 0)
+        ) {
+          res = await fetch(
+            `${apiUrl}/employees/getGraph/${filters.department}`
+          );
+        } else if (
+          (!filters?.department || filters.department === "") &&
+          filters?.skills &&
+          filters.skills.length > 0
+        ) {
+          // Če je skills array, ga je treba pravilno podati v URL (join z vejicami)
+          const skills_id = encodeURIComponent(filters.skills.join(","));
+          console.log(`${apiUrl}/employees/getGraph/skills/${skills_id}`);
+          res = await fetch(`${apiUrl}/employees/getGraph/skills/${skills_id}`);
+        } else {
+          const skillsParam = encodeURIComponent(
+            filters?.skills?.join(",") ?? ""
+          );
+          res = await fetch(
+            `${apiUrl}/employees/getGraph/${filters.department}/${skillsParam}`
+          );
+        }
+
         if (!res.ok) {
-          throw new Error("Failed to fetch employees");
+          throw new Error("Failed to fetch employees" + res.statusText);
         }
         const data = await res.json();
         const formatted = formatEmployeesForGraph(data);
@@ -78,7 +113,7 @@ const EmployeeTimeline: React.FC = () => {
     };
 
     fetchEmployees();
-  }, []);
+  }, [filters]);
 
   // pridobimo podatke zaposlenih
   // oblikujemo pridobljene podatke za graf
@@ -99,7 +134,7 @@ const EmployeeTimeline: React.FC = () => {
         role: availability[0]?.role ?? "", // Glavna vloga – prvi zapis v `Role`, če obstaja
         department:
           emp.Department_Employee_department_id_fkToDepartment?.name ?? "",
-        imageUrl: "", // Če še nimaš slike – tu lahko dodaš default ali generiran gravatar
+        imageUrl: "", // Če še nimaš slike – tu lahko dodaš default ali generiran avatar
         skills: emp.EmployeeSkill.map((es: any) => es.Skills?.skill).filter(
           Boolean
         ),
@@ -111,8 +146,6 @@ const EmployeeTimeline: React.FC = () => {
   //za prikaz filtra
   const [showFilter, setShowFilter] = useState(false);
   const [startDate, setStartDate] = useState<Date>(new Date());
-  //za shranjevanje filtrov --> rabo se bo za posodobljene prikaze
-  const [filters, setFilters] = useState<Filters>();
   const daysToShow = 14;
   const dates = generateDates(startDate, daysToShow);
 

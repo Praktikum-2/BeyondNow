@@ -71,7 +71,7 @@ const EmployeeTimelineFilter: React.FC<AddEmployeeFormProps> = ({
   onClose,
 }) => {
   const [formData, setFormData] = useState({
-    department_id_fk: "",
+    department: "",
     skills: [] as string[],
   });
 
@@ -128,15 +128,15 @@ const EmployeeTimelineFilter: React.FC<AddEmployeeFormProps> = ({
           <div className='space-y-4'>
             <div>
               <label
-                htmlFor='department_id_fk'
+                htmlFor='department'
                 className='block text-sm font-medium text-gray-700 mb-1'>
                 Department
               </label>
               <select
-                id='department_id_fk'
-                name='department_id_fk'
+                id='department'
+                name='department'
                 className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[5px]'
-                value={formData.department_id_fk}
+                value={formData.department}
                 onChange={handleChange}>
                 <option value=''>Choose department</option>
                 {departmentOptions.map((dept) => (

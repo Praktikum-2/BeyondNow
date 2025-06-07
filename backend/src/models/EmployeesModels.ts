@@ -15,24 +15,6 @@ export const getAllEmployees = async () => {
   });
 };
 
-export const getAllEmployeeforGraph = async () => {
-  return await prisma.employee.findMany({
-    include: {
-      Department_Employee_department_id_fkToDepartment: true,
-      Role: {
-        include: {
-          Project: true, // <- točno tako, z veliko začetnico
-        },
-      },
-      EmployeeSkill: {
-        include: {
-          Skills: true,
-        },
-      },
-    },
-  });
-};
-
 export const createNewEmployee = async (rawData: {
   ime: string;
   priimek: string;
@@ -71,4 +53,75 @@ export const createNewEmployee = async (rawData: {
   });
 
   return result;
+};
+
+export const getAllEmployeeforGraph = async () => {
+  return await prisma.employee.findMany({
+    include: {
+      Department_Employee_department_id_fkToDepartment: true,
+      Role: {
+        include: {
+          Project: true, // <- točno tako, z veliko začetnico
+        },
+      },
+      EmployeeSkill: {
+        include: {
+          Skills: true,
+        },
+      },
+    },
+  });
+};
+
+export const getAllEmployeeforGraphDepartment = async (
+  department_id: string
+) => {
+  return await prisma.employee.findMany({
+    where: {
+      department_id_fk: department_id,
+    },
+    include: {
+      Department_Employee_department_id_fkToDepartment: true,
+      Role: {
+        include: {
+          Project: true,
+        },
+      },
+      EmployeeSkill: {
+        include: {
+          Skills: true,
+        },
+      },
+    },
+  });
+};
+
+export const getAllEmployeeforGraphSkills = async (skills: string[]) => {
+  const filteredEmployees = await prisma.employee.findMany({
+    where: {
+      EmployeeSkill: {
+        some: {
+          skills_id_fk: skills[0],
+          NOT: {
+            skills_id_fk: null,
+          },
+        },
+      },
+    },
+    include: {
+      Department_Employee_department_id_fkToDepartment: true,
+      Role: {
+        include: {
+          Project: true,
+        },
+      },
+      EmployeeSkill: {
+        include: {
+          Skills: true,
+        },
+      },
+    },
+  });
+
+  return filteredEmployees;
 };

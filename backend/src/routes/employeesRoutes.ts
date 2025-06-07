@@ -3,6 +3,8 @@ import {
   getEmployees,
   createEmployee,
   getEmployeeforGraph,
+  getEmployeeforGraphDepartment,
+  getEmployeeforGraphSkills,
 } from "../controllers/EmployeesController";
 
 const employeeRoutes = Router();
@@ -14,5 +16,9 @@ employeeRoutes.post("/create", createEmployee);
 employeeRoutes.get("/getAll", getEmployees);
 
 employeeRoutes.get("/getGraph", getEmployeeforGraph);
+
+employeeRoutes.get("/getGraph/:department_id", getEmployeeforGraphDepartment);
+
+employeeRoutes.get("/getGraph/skills/:skills_id", getEmployeeforGraphSkills);
 
 export { employeeRoutes };
