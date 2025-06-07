@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   title: string;
@@ -125,11 +126,13 @@ const Header: React.FC<HeaderProps> = ({ title, onToggleSidebar }) => {
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
           <div className="w-8 h-8 overflow-hidden rounded-full bg-blue-100">
-            <img
-              src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150"
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+            <Link to="/dashboard/profile" className="w-8 h-8 block overflow-hidden rounded-full bg-blue-100">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </Link>
           </div>
         </div>
       </div>

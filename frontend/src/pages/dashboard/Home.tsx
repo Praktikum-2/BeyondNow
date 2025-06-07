@@ -1,16 +1,14 @@
-import React from "react";
-import { useAuth } from "@/contexts/authContext";
-import DashboardMetrics from "@/components/dashboard/main/DashboardMetrics";
-import UtilizationChart from "@/components/dashboard/main/UtilizationChart";
+import DepartmentUtilizationChart from "@/components/dashboard/main/DepartmentUtilizationChart";
 import ProjectOverview from "@/components/dashboard/main/ProjectOverview";
 import ResourceRequests from "@/components/dashboard/main/ResourceRequests";
-import DepartmentUtilizationChart from "@/components/dashboard/main/DepartmentUtilizationChart";
+import UtilizationChart from "@/components/dashboard/main/UtilizationChart";
+import { useAuth } from "@/contexts/authContext";
+import React from "react";
 import {
-  dashboardMetrics,
-  utilizationData,
+  departmentUtilization,
   projects,
   resourceRequests,
-  departmentUtilization,
+  utilizationData
 } from "../../data/mockData";
 
 const Dashboard: React.FC = () => {
@@ -49,8 +47,10 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Metrics overview */}
-      <DashboardMetrics metrics={dashboardMetrics} />
+      {/* Metrics overview
+      <DashboardMetrics />
+      */}
+      
 
       {/* Main dashboard content */}
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>

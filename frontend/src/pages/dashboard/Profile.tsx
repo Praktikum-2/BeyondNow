@@ -1,6 +1,5 @@
 import DashboardMetrics from "@/components/dashboard/main/DashboardMetrics";
 import { useAuth } from "@/contexts/authContext";
-import { dashboardMetrics } from "@/data/mockData";
 import { Check, Pencil } from "lucide-react";
 import React, { useState } from "react";
 
@@ -158,7 +157,7 @@ const Profile: React.FC = () => {
                 <h2 className="text-lg font-semibold text-gray-700 mb-2">
                     Your Statistics
                 </h2>
-                <DashboardMetrics metrics={dashboardMetrics} />
+                <DashboardMetrics />
             </div>
         </div>
     );
