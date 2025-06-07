@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import type { Employee, TimelineRow } from "@/types/types";
+import InitialsAvatar from "./InitialsAvatar";
 
 // generiramo datume za prikaz v grafu
 const generateDates = (startDate: Date, days: number) => {
@@ -246,13 +247,18 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                 <td className='sticky left-0 z-10 bg-white px-6 py-3 whitespace-nowrap border-r border-gray-200'>
                   <div className='flex items-center'>
                     <div className='flex-shrink-0 h-8 w-8 rounded-full overflow-hidden bg-gray-200'>
-                      <img
-                        src={
-                          employees.find((e) => e.id === row.id)?.imageUrl || ""
-                        }
-                        alt={row.name}
-                        className='h-full w-full object-cover'
-                      />
+                      {employees.find((e) => e.id === row.id)?.imageUrl ? (
+                        <img
+                          src={
+                            employees.find((e) => e.id === row.id)?.imageUrl ||
+                            ""
+                          }
+                          alt={row.name}
+                          className='h-full w-full object-cover'
+                        />
+                      ) : (
+                        <InitialsAvatar name={row.name} size={32} />
+                      )}
                     </div>
                     <div className='ml-3'>
                       <div className='text-sm font-medium text-gray-900'>
