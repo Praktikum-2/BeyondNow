@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import type { Employee, TimelineRow } from "@/types/types";
 import InitialsAvatar from "./InitialsAvatar";
+import EmployeeTimelineFilter from "./EmployeeTimelineFilter";
 
 // generiramo datume za prikaz v grafu
 const generateDates = (startDate: Date, days: number) => {
@@ -50,8 +51,17 @@ interface EmployeeTimelineProps {
   employees: Employee[];
 }
 
+interface Filters {
+  department: string;
+  skills: string[];
+}
+
 const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
+  //za prikaz filtra
+  const [showFilter, setShowFilter] = useState(false);
   const [startDate, setStartDate] = useState<Date>(new Date());
+  //za shranjevanje filtrov --> rabo se bo za posodobljene prikaze
+  const [filters, setFilters] = useState<Filters>();
   const daysToShow = 14;
   const dates = generateDates(startDate, daysToShow);
 
@@ -162,6 +172,13 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
     );
   };
 
+  // kako obdelamo filtre
+  const handleAddFilter = async (formData: any) => {
+    setFilters(formData);
+
+    setShowFilter(false);
+  };
+
   return (
     <div className='bg-white rounded-lg shadow-sm border border-gray-100'>
       <div className='px-5 py-4 border-b border-gray-100 flex items-center justify-between'>
@@ -180,10 +197,19 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
           </button>
 
           {/* Filter button */}
-          <button className='flex items-center px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'>
-            <Filter size={14} className='mr-1' />
-            <span>Filter</span>
+          <button
+            onClick={() => setShowFilter(true)}
+            className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
+            <Filter size={16} className='mr-2' />
+            Filter
           </button>
+
+          {showFilter && (
+            <EmployeeTimelineFilter
+              onSubmit={handleAddFilter}
+              onClose={() => setShowFilter(false)}
+            />
+          )}
 
           {/* Navigation buttons */}
           <div className='flex items-center space-x-1'>
@@ -281,7 +307,11 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                           ? "bg-gray-300"
                           : getCellColor(cell.status)
                       } transition-colors cursor-pointer`}
-                      title={`${row.name}: ${cell.status} (${cell.allocation}% allocated)`}>
+                      title={
+                        isWeekend(dates[cellIndex])
+                          ? "weekend"
+                          : `${row.name}: ${cell.status} (${cell.allocation}% allocated)`
+                      }>
                       {/* Polnilo ozadja na osnovi allocation */}
                       {cell.allocation > 0 && (
                         <div
