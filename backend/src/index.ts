@@ -6,9 +6,12 @@ import { authMiddleware } from "./middlewares/auth.middleware";
 import authRoutes from "./routes/auth.routes";
 import DepartmentsRoutes from "./routes/DepartmentsRoutes";
 import { employeeRoutes } from "./routes/employeesRoutes";
+import metricsRoutes from "./routes/metrics.routes";
 import organizationRoutes from "./routes/organization.routes";
+import profileRoutes from "./routes/profile.routes";
 import { projectRoutes } from "./routes/ProjectsRoutes";
 import { SkillsRoutes } from "./routes/SkillsRoutes";
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +27,8 @@ app.use("/skills", SkillsRoutes);
 app.use("/api/departments", authMiddleware, DepartmentsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/organization", organizationRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/metrics", authMiddleware, metricsRoutes);
 
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from the backend" });
