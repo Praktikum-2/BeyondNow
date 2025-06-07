@@ -5,6 +5,7 @@ import { AuthProvider } from "./contexts/authContext";
 import Departments from "./pages/dashboard/Departments";
 import Employees from "./pages/dashboard/Employees";
 import Dashboard from "./pages/dashboard/Home";
+import Profile from "./pages/dashboard/Profile";
 import Projects from "./pages/dashboard/Projects";
 import Reports from "./pages/dashboard/Reports";
 import Requests from "./pages/dashboard/Requests";
@@ -14,9 +15,8 @@ import DashboardMain from "./pages/DashboardMain";
 import FirstLogin from "./pages/FirstLogin";
 import Landing from "./pages/Landing";
 import LoginPage from "./pages/Login";
-import SignupPage from "./pages/Signup";
 import NotFound from "./pages/NotFound"; // Add this import
-
+import SignupPage from "./pages/Signup";
 function App() {
   return (
     <AuthProvider>
@@ -66,6 +66,7 @@ function App() {
           <Route path='timeline' element={<Timeline />} />
           <Route path='settings' element={<Settings />} />
           <Route path='help' element={<div>Help coming soon...</div>} />
+          <Route path='profile' element={<Profile />} />
           {/* Catch-all route for unknown dashboard routes */}
           <Route path='*' element={<NotFound />} />
         </Route>
