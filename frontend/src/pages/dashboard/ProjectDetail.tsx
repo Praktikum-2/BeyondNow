@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Calendar,
-  Users,
-  Edit,
-  UserPlus,
-  Save,
-  X,
-  User,
-} from "lucide-react";
+import { ArrowLeft, Edit, UserPlus, Users } from "lucide-react";
 import type { Project } from "@/types/types";
+import ProjectInfo from "@/components/dashboard/projects/ProjectInfo";
+import ProjectTeam from "@/components/dashboard/projects/ProjectTeam";
+import ProjectEditForm from "@/components/dashboard/projects/ProjectEditForm";
 
 const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
 
@@ -63,7 +57,6 @@ const ProjectDetail: React.FC = () => {
 
         setProject(foundProject);
 
-        // Fetch additional data
         await Promise.all([
           fetchProjectManager(foundProject.projectManager_id),
           fetchTeamMembersCount(foundProject.project_id),
@@ -113,36 +106,20 @@ const ProjectDetail: React.FC = () => {
     }
   };
 
-  // New function to fetch project employees with details
   const fetchProjectEmployees = async (projectId: string) => {
     try {
-      // To bi moralo returnat employees glede na projekt se treba implementirat na BE
       const response = await fetch(`${apiUrl}/projects/${projectId}/employees`);
 
       if (response.ok) {
         const employees = await response.json();
         setProjectEmployees(employees);
       } else {
-        // Fallback: if the specific endpoint doesn't exist,
-        // you might need to get all employees and filter by project
         console.log("Project employees endpoint not available, using fallback");
       }
     } catch (err) {
       console.error("Error fetching project employees:", err);
-      // Set empty array on error
       setProjectEmployees([]);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A";
-    const isoDateString = dateString.replace(" ", "T");
-    const date = new Date(isoDateString);
-    return new Intl.DateTimeFormat("en-US", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(date);
   };
 
   const getStatusBadgeClass = (status: string) => {
@@ -175,207 +152,14 @@ const ProjectDetail: React.FC = () => {
     }
   };
 
-  // Current Employees Component
-  const CurrentEmployees = () => {
-    return (
-      <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-6'>
-        <div className='flex items-center justify-between mb-4'>
-          <h2 className='text-lg font-medium text-gray-900'>Current Team</h2>
-          <span className='text-sm text-gray-500'>
-            {projectEmployees.length} members
-          </span>
-        </div>
-
-        {projectEmployees.length === 0 ? (
-          <div className='text-center text-gray-500 py-8'>
-            <Users size={48} className='mx-auto mb-4 text-gray-300' />
-            <p>No team members assigned</p>
-            <p className='text-sm mt-2'>
-              Add employees to this project to see them here
-            </p>
-          </div>
-        ) : (
-          <div className='space-y-4'>
-            {projectEmployees.map((employee) => (
-              <div
-                key={employee.employee_id}
-                className='flex items-center space-x-3'>
-                <div className='flex-shrink-0 h-10 w-10'>
-                  <div className='h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center'>
-                    <User size={20} className='text-gray-500' />
-                  </div>
-                </div>
-                <div className='flex-1 min-w-0'>
-                  <p className='text-sm font-medium text-gray-900 truncate'>
-                    {employee.ime} {employee.priimek}
-                  </p>
-                  <p className='text-sm text-gray-500 truncate'>
-                    {employee.Role.length > 0
-                      ? employee.Role[0].employeeRole
-                      : "No Role"}
-                    {employee.allocation && ` • ${employee.allocation}%`}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className='mt-4 pt-4 border-t border-gray-200'>
-          <button className='w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
-            <UserPlus size={16} className='mr-2' />
-            Add Team Member
-          </button>
-        </div>
-      </div>
-    );
+  const handleSaveProject = async (updatedProject: Partial<Project>) => {
+    setProject((prev) => (prev ? { ...prev, ...updatedProject } : null));
+    setIsEditing(false);
   };
 
-  const ProjectEditForm = () => {
-    const [formData, setFormData] = useState({
-      name: project?.name || "",
-      description: project?.description || "",
-      start_date: project?.start_date || "",
-      end_date: project?.end_date || "",
-      status: project?.status || "planned",
-    });
-
-    const handleChange = (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-      >
-    ) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSave = async () => {
-      try {
-        const response = await fetch(
-          `${apiUrl}/projects/update/${project?.project_id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          }
-        );
-
-        if (response.ok) {
-          setProject((prev) => (prev ? { ...prev, ...formData } : null));
-          setIsEditing(false);
-        } else {
-          console.error("Failed to update project");
-        }
-      } catch (err) {
-        console.error("Error updating project:", err);
-      }
-    };
-
-    return (
-      <div className='space-y-6'>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          <div>
-            <label
-              htmlFor='name'
-              className='block text-sm font-medium text-gray-700 mb-1'>
-              Project Name
-            </label>
-            <input
-              type='text'
-              id='name'
-              name='name'
-              value={formData.name}
-              onChange={handleChange}
-              className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-            />
-          </div>
-        </div>
-
-        <div>
-          <label
-            htmlFor='description'
-            className='block text-sm font-medium text-gray-700 mb-1'>
-            Project Description
-          </label>
-          <textarea
-            id='description'
-            name='description'
-            rows={4}
-            value={formData.description}
-            onChange={handleChange}
-            className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-          />
-        </div>
-
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-          <div>
-            <label
-              htmlFor='start_date'
-              className='block text-sm font-medium text-gray-700 mb-1'>
-              Start Date
-            </label>
-            <input
-              type='date'
-              id='start_date'
-              name='start_date'
-              value={formData.start_date}
-              onChange={handleChange}
-              className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-            />
-          </div>
-          <div>
-            <label
-              htmlFor='end_date'
-              className='block text-sm font-medium text-gray-700 mb-1'>
-              End Date
-            </label>
-            <input
-              type='date'
-              id='end_date'
-              name='end_date'
-              value={formData.end_date}
-              onChange={handleChange}
-              className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-            />
-          </div>
-          <div>
-            <label
-              htmlFor='status'
-              className='block text-sm font-medium text-gray-700 mb-1'>
-              Status
-            </label>
-            <select
-              id='status'
-              name='status'
-              value={formData.status}
-              onChange={handleChange}
-              className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'>
-              <option value='planned'>Planned</option>
-              <option value='active'>Active</option>
-              <option value='completed'>Completed</option>
-              <option value='on-hold'>On Hold</option>
-            </select>
-          </div>
-        </div>
-
-        <div className='flex justify-end space-x-3'>
-          <button
-            onClick={() => setIsEditing(false)}
-            className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50'>
-            <X size={16} className='mr-2 inline' />
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            className='px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
-            <Save size={16} className='mr-2 inline' />
-            Save Changes
-          </button>
-        </div>
-      </div>
-    );
+  const handleAddTeamMember = () => {
+    // TODO: Implement add team member functionality
+    console.log("Add team member clicked");
   };
 
   const TeamManagement = () => {
@@ -383,7 +167,9 @@ const ProjectDetail: React.FC = () => {
       <div className='space-y-6'>
         <div className='flex justify-between items-center'>
           <h3 className='text-lg font-medium text-gray-900'>Team Members</h3>
-          <button className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
+          <button
+            onClick={handleAddTeamMember}
+            className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'>
             <UserPlus size={16} className='mr-2' />
             Add Member
           </button>
@@ -467,65 +253,19 @@ const ProjectDetail: React.FC = () => {
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
         {/* Project Info - Takes 2/3 of the space */}
         <div className='lg:col-span-2'>
-          <div className='bg-white rounded-lg shadow-sm border border-gray-200'>
-            <div className='px-6 py-4 border-b border-gray-200'>
-              <h2 className='text-lg font-medium text-gray-900'>
-                Project Information
-              </h2>
-            </div>
-            <div className='p-6'>
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-6'>
-                <div className='flex items-center'>
-                  <Calendar size={20} className='text-gray-400 mr-3' />
-                  <div>
-                    <p className='text-sm font-medium text-gray-900'>
-                      Timeline
-                    </p>
-                    <p className='text-sm text-gray-500'>
-                      {formatDate(project.start_date)} -{" "}
-                      {formatDate(project.end_date)}
-                    </p>
-                  </div>
-                </div>
-                <div className='flex items-center'>
-                  <Users size={20} className='text-gray-400 mr-3' />
-                  <div>
-                    <p className='text-sm font-medium text-gray-900'>
-                      Team Size
-                    </p>
-                    <p className='text-sm text-gray-500'>
-                      {teamMembersCount} members
-                    </p>
-                  </div>
-                </div>
-                <div className='flex items-center'>
-                  <User size={20} className='text-gray-400 mr-3' />
-                  <div>
-                    <p className='text-sm font-medium text-gray-900'>
-                      Project Manager
-                    </p>
-                    <p className='text-sm text-gray-500'>
-                      {projectManager
-                        ? `${projectManager.firstName} ${projectManager.lastName}`
-                        : "Not assigned"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className='text-sm font-medium text-gray-900 mb-2'>
-                  Project Description
-                </h3>
-                <p className='text-sm text-gray-600'>{project.description}</p>
-              </div>
-            </div>
-          </div>
+          <ProjectInfo
+            project={project}
+            projectManager={projectManager}
+            teamMembersCount={teamMembersCount}
+          />
         </div>
 
         {/* Current Employees - Takes 1/3 of the space */}
         <div className='lg:col-span-1'>
-          <CurrentEmployees />
+          <ProjectTeam
+            projectEmployees={projectEmployees}
+            onAddTeamMember={handleAddTeamMember}
+          />
         </div>
       </div>
 
@@ -570,7 +310,12 @@ const ProjectDetail: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <ProjectEditForm />
+                <ProjectEditForm
+                  project={project}
+                  onSave={handleSaveProject}
+                  onCancel={() => setIsEditing(false)}
+                  apiUrl={apiUrl}
+                />
               )}
             </div>
           )}
