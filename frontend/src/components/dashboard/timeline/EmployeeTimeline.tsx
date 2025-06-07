@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import type { Employee, TimelineRow } from "@/types/types";
 import InitialsAvatar from "./InitialsAvatar";
@@ -46,9 +46,10 @@ const isToday = (date: Date) => {
   );
 };
 
-// pridobimo podatke zaposlenih
-interface EmployeeTimelineProps {
-  employees: Employee[];
+const apiUrl = import.meta.env.VITE_API_URL_LOCAL;
+
+function setError(message: string) {
+  throw new Error("Function not implemented: " + message);
 }
 
 interface Filters {
@@ -56,7 +57,57 @@ interface Filters {
   skills: string[];
 }
 
-const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
+const EmployeeTimeline: React.FC = () => {
+  // zaposleni v grafu
+  const [employeesGraph, setEmployeesGraph] = useState<Employee[]>([]);
+
+  // tu bomo fetchali dejanske podatke employeejev
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/employees/getAll`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch employees");
+        }
+        const data = await res.json();
+        const formatted = formatEmployeesForGraph(data);
+        setEmployeesGraph(formatted);
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
+
+  // pridobimo podatke zaposlenih
+  // oblikujemo pridobljene podatke za graf
+  const formatEmployeesForGraph = (employeesGraph: any[]): Employee[] => {
+    return employeesGraph.map((emp) => {
+      const availability = emp.Role.map((role: any) => ({
+        project: role.Project?.name ?? "Unknown Project",
+        role: role.employeeRole,
+        allocation: role.allocation ?? 0,
+        startDate: role.startDate ?? null,
+        endDate: role.endDate ?? null,
+      }));
+
+      return {
+        id: emp.employee_id,
+        name: `${emp.ime} ${emp.priimek}`,
+        email: emp.email ?? "",
+        role: availability[0]?.role ?? "", // Glavna vloga – prvi zapis v `Role`, če obstaja
+        department:
+          emp.Department_Employee_department_id_fkToDepartment?.name ?? "",
+        imageUrl: "", // Če še nimaš slike – tu lahko dodaš default ali generiran gravatar
+        skills: emp.EmployeeSkill.map((es: any) => es.Skills?.skill).filter(
+          Boolean
+        ),
+        availability,
+      };
+    });
+  };
+
   //za prikaz filtra
   const [showFilter, setShowFilter] = useState(false);
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -73,7 +124,7 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
   };
 
   const generateTimelineRows = (): TimelineRow[] => {
-    return employees.map((employee) => {
+    return employeesGraph.map((employee) => {
       const cells = dates.map((date) => {
         const dateString = date.toISOString().split("T")[0];
         const availabilityRecord = employee.availability.find(
@@ -273,11 +324,11 @@ const EmployeeTimeline: React.FC<EmployeeTimelineProps> = ({ employees }) => {
                 <td className='sticky left-0 z-10 bg-white px-6 py-3 whitespace-nowrap border-r border-gray-200'>
                   <div className='flex items-center'>
                     <div className='flex-shrink-0 h-8 w-8 rounded-full overflow-hidden bg-gray-200'>
-                      {employees.find((e) => e.id === row.id)?.imageUrl ? (
+                      {employeesGraph.find((e) => e.id === row.id)?.imageUrl ? (
                         <img
                           src={
-                            employees.find((e) => e.id === row.id)?.imageUrl ||
-                            ""
+                            employeesGraph.find((e) => e.id === row.id)
+                              ?.imageUrl || ""
                           }
                           alt={row.name}
                           className='h-full w-full object-cover'

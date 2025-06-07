@@ -13,6 +13,27 @@ function setError(message: string) {
 const Timeline: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
 
+  // tu bomo fetchali dejanske podatke employeejev
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/employees/getAll`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch employees");
+        }
+        const data = await res.json();
+
+        // Oblikuj podatke, preden shraniš v state
+        const formattedEmployees = formatEmployeesForGraph(data);
+        setEmployees(formattedEmployees);
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
+
   // oblikujemo pridobljene podatke za graf
   const formatEmployeesForGraph = (employees: any[]): Employee[] => {
     return employees.map((emp) => {
@@ -40,28 +61,9 @@ const Timeline: React.FC = () => {
     });
   };
 
-  // tu bomo fetchali dejanske podatke employeejev
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const res = await fetch(`${apiUrl}/employees/getAll`);
-        if (!res.ok) {
-          throw new Error("Failed to fetch employees");
-        }
-        const data = await res.json();
-        const formatted = formatEmployeesForGraph(data);
-        setEmployees(formatted);
-      } catch (err) {
-        setError((err as Error).message);
-      }
-    };
-
-    fetchEmployees();
-  }, []);
-
   return (
     <div className='space-y-6'>
-      <EmployeeTimeline employees={employees} />
+      <EmployeeTimeline />
       <ProjectTimeline projects={projects} employees={employees} />
     </div>
   );
