@@ -72,7 +72,9 @@ model Role {
   project_id_fk  String   @db.Uuid  
   employeeRole   String   @db.VarChar 
   allocation     Int?     @default(100) 
-  
+  startDate      DateTime? @db.Timestamp(6)
+  endDate        DateTime? @db.Timestamp(6)
+
   Project  Project  @relation(fields: [project_id_fk], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "ProjectDeveloper_project_id_fk_fkey")
   Employee Employee @relation(fields: [employee_id_fk], references: [employee_id], onDelete: Cascade, onUpdate: Restrict)
   

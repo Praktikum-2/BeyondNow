@@ -23,14 +23,25 @@ export const createNewRole = async (rawData: {
   project_id_fk: string;
   employeeRole: string;
   allocation?: number;
+  startDate?: string;
+  endDate?: string;
 }) => {
-  const { employee_id_fk, project_id_fk, employeeRole, allocation } = rawData;
+  const {
+    employee_id_fk,
+    project_id_fk,
+    employeeRole,
+    allocation,
+    startDate,
+    endDate,
+  } = rawData;
 
   const data = {
     employee_id_fk,
     project_id_fk,
     employeeRole,
-    allocation: allocation || 100, // 100% defautl
+    allocation: allocation || 100, // default to 100% if not provided
+    startDate: startDate ? new Date(startDate) : null,
+    endDate: endDate ? new Date(endDate) : null,
   };
 
   const result = await prisma.role.create({
@@ -100,13 +111,24 @@ export const updateRole = async (
   updateData: {
     employeeRole?: string;
     allocation?: number;
+    startDate?: string;
+    endDate?: string;
   }
 ) => {
+  // Convert date strings to Date objects if provided
+  const processedData = {
+    ...updateData,
+    startDate: updateData.startDate
+      ? new Date(updateData.startDate)
+      : undefined,
+    endDate: updateData.endDate ? new Date(updateData.endDate) : undefined,
+  };
+
   return await prisma.role.update({
     where: {
       role_id,
     },
-    data: updateData,
+    data: processedData,
     include: {
       Employee: {
         include: {
