@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.routes";
 import DepartmentsRoutes from "./routes/DepartmentsRoutes";
 import { employeeRoutes } from "./routes/employeesRoutes";
 import organizationRoutes from "./routes/organization.routes";
+import profileRoutes from "./routes/profile.routes";
 import { projectRoutes } from "./routes/ProjectsRoutes";
 import { SkillsRoutes } from "./routes/SkillsRoutes";
 
@@ -24,7 +25,7 @@ app.use("/skills", SkillsRoutes);
 app.use("/api/departments", authMiddleware, DepartmentsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/organization", organizationRoutes);
-
+app.use("/api/profile", profileRoutes);
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from the backend" });
 });
